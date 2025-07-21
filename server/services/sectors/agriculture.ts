@@ -1,167 +1,200 @@
 import { GoogleGenAI } from "@google/genai";
-import { DemandItem, ContextualData, InsertPrediction } from "@shared/schema";
 import { fetchComprehensiveRegionData } from "../external-data";
-import { fetchRealEnvironmentalData } from "../real-data";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GOOGLE_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || ""
 });
 
-export interface AgricultureDemandInput {
+export interface AgricultureForecastInput {
   region: string;
   timeframe: string;
-  cropCycle: 'kharif' | 'rabi' | 'zaid';
-  farmingType: 'smallholder' | 'commercial' | 'organic';
 }
 
-export interface AgricultureDemandResult {
-  product: string;
-  category: 'seeds' | 'fertilizers' | 'machinery' | 'pesticides';
-  cropType: string;
-  seasonality: string;
-  demandQuantity: number;
+export interface AgriculturePrediction {
+  itemName: string;
+  department: string;
+  category: string;
+  subcategory: string;
+  currentDemand: number;
+  predictedDemand: number;
+  demandChangePercentage: number;
+  demandTrend: string; // "increase", "decrease", "no change"
   confidence: number;
-  weatherFactors: string[];
-  policyImpact: string;
-  marketPrices: string;
-  soilConditions: string;
+  peakPeriod: string;
   reasoning: string;
+  marketFactors: string[];
+  recommendations: string[];
+  newsImpact: string;
+  seasonalFactor: string;
+  riskLevel: string;
 }
 
-export async function generateAgricultureDemandForecast(input: AgricultureDemandInput): Promise<AgricultureDemandResult[]> {
+async function fetchRealTimeData(region: string) {
   try {
-    // Fetch real-time data
-    const [comprehensiveData, environmentalData] = await Promise.all([
-      fetchComprehensiveRegionData(input.region),
-      fetchRealEnvironmentalData(input.region)
-    ]);
+    console.log(`Fetching real-time agriculture data for ${region}...`);
+    
+    const comprehensiveData = await fetchComprehensiveRegionData(region);
+
+    return {
+      comprehensive: comprehensiveData,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.warn(`Warning: Could not fetch all real-time data for ${region}:`, error);
+    return {
+      comprehensive: { 
+        weather: { conditions: "Variable", temperature: 75, humidity: 60, airQuality: "Moderate" }, 
+        news: { headlines: [], healthRelated: [], diseaseOutbreaks: [] }, 
+        socialMedia: { healthTrends: [], publicSentiment: "neutral" } 
+      },
+      timestamp: new Date().toISOString()
+    };
+  }
+}
+
+export async function generateAgriculturePredictions(region: string, timeframe: string): Promise<AgriculturePrediction[]> {
+  try {
+    console.log(`🤖 Generating AI-driven agriculture demand forecast for ${region}...`);
+    
+    const realTimeData = await fetchRealTimeData(region);
+    
+    // Convert timeframe to standardized periods
+    const standardizedTimeframe = timeframe.includes('15') ? '15 days' : 
+                                 timeframe.includes('30') ? '30 days' : 
+                                 timeframe.includes('60') ? '60 days' : '30 days';
 
     const prompt = `
-You are an expert agricultural economist with access to real-time global agricultural data. Predict agricultural input demand for the specified region based on authentic data.
+You are an expert agricultural economist and crop specialist with deep knowledge of Indian farming practices, seasonal patterns, and agri-commodity markets.
 
-Region: ${input.region}
-Timeframe: ${input.timeframe}
-Crop Cycle: ${input.cropCycle}
-Farming Type: ${input.farmingType}
+Generate professional demand predictions for agriculture sector in ${region}, India for the next ${standardizedTimeframe}.
 
-REAL-TIME WEATHER DATA:
-- Temperature: ${environmentalData.temperature}°F
-- Humidity: ${environmentalData.humidity}%
-- Precipitation: ${environmentalData.precipitation} inches
-- Wind Speed: ${environmentalData.windSpeed} mph
-- UV Index: ${environmentalData.uvIndex}
-- Conditions: Weather patterns affecting crops
+Real-time Market Context:
+${JSON.stringify(realTimeData, null, 2)}
 
-ENVIRONMENTAL CONDITIONS:
-- Air Quality: ${environmentalData.airQuality}
-- Pressure: ${environmentalData.pressure} inHg
-- Visibility: ${environmentalData.visibility} miles
-- Dew Point: ${environmentalData.dewPoint}°F
+AGRICULTURE SUBCATEGORIES FOR FORECASTING:
 
-MARKET & POLICY DATA:
-- News Headlines: ${comprehensiveData.news.headlines.join(', ')}
-- Social Media Trends: ${comprehensiveData.socialMedia.healthTrends.join(', ')}
-- Public Sentiment: ${comprehensiveData.socialMedia.publicSentiment}
+1. SEEDS & PLANTING MATERIALS:
+   - Cereal Seeds: Wheat (HD-2967, PBW-343), Rice (Basmati, IR-64), Maize (NK-6240, DKC-9108)
+   - Pulses Seeds: Chickpea (Kabuli, Desi), Lentil (Masoor), Pigeon pea (Arhar)
+   - Oilseed Seeds: Mustard (Pusa Bold), Sunflower (DRSH-1), Soybean (JS-335)
+   - Vegetable Seeds: Tomato (Arka Rakshak), Onion (Agrifound Dark Red), Potato (Kufri Jyoti)
+   - Cotton Seeds: Bt Cotton (Bollgard-II), Hybrid Cotton varieties
 
-SEASONAL CONSIDERATIONS:
-- Current Season: Based on weather patterns
-- Monsoon Predictions: Derived from weather data
-- Crop Calendar: ${input.cropCycle} season requirements
+2. FERTILIZERS & NUTRIENTS:
+   - Nitrogen Fertilizers: Urea (46-0-0), Ammonium Sulphate, Calcium Ammonium Nitrate
+   - Phosphate Fertilizers: DAP (18-46-0), SSP (16% P2O5), Triple Super Phosphate
+   - Potash Fertilizers: Muriate of Potash (60% K2O), Sulphate of Potash
+   - Complex Fertilizers: NPK (10-26-26), NPK (12-32-16), NPK (20-20-0)
+   - Micronutrients: Zinc Sulphate, Boron, Iron Chelates, Manganese Sulphate
 
-Based on this authentic data, predict agricultural demand for:
+3. CROP PROTECTION CHEMICALS:
+   - Insecticides: Cypermethrin, Chlorpyrifos, Imidacloprid, Thiamethoxam
+   - Fungicides: Mancozeb, Propiconazole, Azoxystrobin, Carbendazim
+   - Herbicides: Glyphosate, 2,4-D, Atrazine, Pendimethalin
+   - Biological Control: Trichoderma, Pseudomonas, NPV (Nuclear Polyhedrosis Virus)
+   - Plant Growth Regulators: Gibberellic Acid, Cytokinin, Auxins
 
-1. Seeds: Based on crop cycles and weather patterns
-2. Fertilizers: Based on soil conditions and crop requirements  
-3. Machinery: Based on farm size and season
-4. Pesticides: Based on weather conditions and pest patterns
+4. FARM MACHINERY & EQUIPMENT:
+   - Tractors: Mahindra 575 DI, TAFE 42 DI, Sonalika DI-730, John Deere 5042D
+   - Harvesters: Combine harvesters, Paddy transplanters, Sugarcane harvesters
+   - Tillage Equipment: Cultivators, Harrows, Ploughs, Rotavators
+   - Irrigation Equipment: Drip irrigation systems, Sprinklers, Pumps
+   - Threshing Equipment: Threshers, Winnowing fans, Chaff cutters
 
-For each agricultural product prediction, provide:
-- Product name and specifications
-- Category (seeds/fertilizers/machinery/pesticides)
-- Target crop type
-- Seasonal timing requirements
-- Estimated demand quantity (units/tons)
-- Confidence level (0-1)
-- Weather factors affecting demand
-- Government policy/subsidy impact
-- Current market price trends
-- Soil and environmental conditions
-- Detailed reasoning
+5. IRRIGATION & WATER MANAGEMENT:
+   - Drip Irrigation: Drippers, Laterals, Main lines, Filters
+   - Sprinkler Systems: Impact sprinklers, Micro sprinklers, Rain guns
+   - Water Pumps: Submersible pumps, Centrifugal pumps, Solar pumps
+   - Storage Systems: Water tanks, Check dams, Farm ponds
+   - Water Treatment: Filters, pH controllers, Fertigation systems
 
-Respond with JSON array:
+6. LIVESTOCK & DAIRY:
+   - Cattle Feed: Protein concentrate, Mineral mixture, Silage
+   - Poultry Feed: Broiler starter, Layer feed, Chick feed
+   - Veterinary Medicines: Antibiotics, Vaccines, Dewormers, Growth promoters
+   - Dairy Equipment: Milking machines, Milk coolers, Butter churns
+   - Animal Housing: Cattle sheds, Poultry cages, Ventilation systems
+
+7. POST-HARVEST & STORAGE:
+   - Storage Structures: Silos, Warehouses, Cold storage units
+   - Processing Equipment: Rice mills, Oil expellers, Flour mills
+   - Packaging Materials: Gunny bags, HDPE bags, Vacuum packing
+   - Preservation: Fumigants, Moisture absorbers, Pest control
+   - Transportation: Farm trailers, Refrigerated vehicles
+
+8. ORGANIC & SUSTAINABLE FARMING:
+   - Organic Fertilizers: Vermicompost, FYM, Compost, Biofertilizers
+   - Organic Pesticides: Neem oil, Pheromone traps, Sticky traps
+   - Sustainable Practices: Cover crops, Crop rotation, Green manuring
+   - Certification: Organic certification, Good Agricultural Practices (GAP)
+
+FORECASTING REQUIREMENTS:
+
+1. NEWS & MARKET INTEGRATION:
+   - Analyze recent agricultural policy announcements and MSP changes
+   - Consider monsoon forecasts and weather pattern impacts
+   - Factor in international commodity price fluctuations
+   - Include impact of government subsidies and farmer schemes
+   - Account for crop insurance and risk management programs
+
+2. DEMAND VARIATION PATTERNS:
+   - Increases: 5-40% for climate-resilient varieties, government-promoted crops, or drought-resistant seeds
+   - Decreases: 5-25% due to weather uncertainty, market price volatility, or policy changes
+   - Stable: ±5% for traditional crops with established farming practices
+   - Include specific rationale based on cropping patterns and agricultural cycles
+
+3. PROFESSIONAL FORECASTING CRITERIA:
+   - Base predictions on crop calendar and seasonal requirements
+   - Consider regional soil types and water availability
+   - Factor in farmer income levels and credit accessibility
+   - Account for technology adoption rates and extension services
+   - Include supply chain logistics and market connectivity
+
+4. TIMEFRAME SPECIFICATIONS:
+   - 15 days: Focus on immediate seasonal needs, emergency supplies, pest outbreaks
+   - 30 days: Standard forecasting for seasonal crop inputs and equipment
+   - 60 days: Strategic planning for next season preparation and bulk procurement
+
+Generate exactly 10 diverse predictions covering multiple agricultural segments with specific product names and specifications.
+
+Respond with JSON array in this exact format:
 [{
-  "product": "string",
-  "category": "seeds|fertilizers|machinery|pesticides",
-  "cropType": "string",
-  "seasonality": "string",
-  "demandQuantity": number,
-  "confidence": number,
-  "weatherFactors": ["factor1", "factor2"],
-  "policyImpact": "string", 
-  "marketPrices": "string",
-  "soilConditions": "string",
-  "reasoning": "string"
+  "itemName": "string (specific product name with variety/brand specifications)",
+  "department": "string (e.g., 'Crop Production Department', 'Horticulture Department', 'Animal Husbandry Department', 'Farm Mechanization Department')",
+  "category": "string (Seeds/Fertilizers/Crop Protection/Farm Machinery/Irrigation/Livestock/Post-Harvest/Organic)",
+  "subcategory": "string (specific agricultural category)", 
+  "currentDemand": number (baseline units per month for region),
+  "predictedDemand": number (forecasted units for timeframe),
+  "demandChangePercentage": number (percentage change as number, e.g., 18.2 for 18.2% increase, -11.5 for 11.5% decrease),
+  "demandTrend": "string (increase/decrease/no change)",
+  "confidence": number (0.65-0.95 based on data quality),
+  "peakPeriod": "${standardizedTimeframe}",
+  "reasoning": "string (detailed agricultural and market rationale with percentage context)",
+  "marketFactors": ["string (specific agricultural drivers like weather, MSP, subsidies, crop cycles)"],
+  "recommendations": ["string (actionable recommendations for farmers/dealers/manufacturers)"],
+  "newsImpact": "string (specific agricultural news or policy affecting this item)",
+  "seasonalFactor": "string (seasonal agricultural influence like sowing, harvesting, monsoon)",
+  "riskLevel": "Low/Medium/High"
 }]
 `;
 
-    const response = await ai.generateContent({
-      model: "gemini-2.0-flash-exp",
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
+      config: {
         responseMimeType: "application/json"
       }
     });
 
-    const rawJson = response.response.text();
+    const rawJson = response.text;
     if (rawJson) {
       const predictions = JSON.parse(rawJson);
       return predictions;
     } else {
-      throw new Error("Empty response from Gemini");
+      throw new Error("Empty response from Gemini AI");
     }
   } catch (error) {
-    console.error('Error generating agriculture demand forecast:', error);
-    // Fallback to basic predictions
-    return [
-      {
-        product: "Rice Seeds",
-        category: "seeds",
-        cropType: "Rice",
-        seasonality: "Kharif season",
-        demandQuantity: 100,
-        confidence: 0.75,
-        weatherFactors: ["Monsoon timing", "Temperature patterns"],
-        policyImpact: "Government seed subsidies available",
-        marketPrices: "Stable pricing expected",
-        soilConditions: "Suitable moisture levels",
-        reasoning: "Basic fallback prediction for common crop"
-      }
-    ];
+    console.error('Error generating agriculture predictions:', error);
+    throw new Error(`Failed to generate agriculture demand forecast: ${error}`);
   }
 }
-
-export const agricultureItems = [
-  // Seeds
-  { name: "Rice Seeds (Basmati)", category: "seeds", subcategory: "cereal", specifications: { cropCycle: "kharif", soilType: "clay" }},
-  { name: "Wheat Seeds", category: "seeds", subcategory: "cereal", specifications: { cropCycle: "rabi", soilType: "loam" }},
-  { name: "Cotton Seeds", category: "seeds", subcategory: "cash_crop", specifications: { cropCycle: "kharif", soilType: "black" }},
-  { name: "Soybean Seeds", category: "seeds", subcategory: "oilseed", specifications: { cropCycle: "kharif", soilType: "well_drained" }},
-  
-  // Fertilizers
-  { name: "Urea Fertilizer", category: "fertilizers", subcategory: "nitrogen", specifications: { nutrient: "N", application: "pre_sowing" }},
-  { name: "DAP Fertilizer", category: "fertilizers", subcategory: "phosphorus", specifications: { nutrient: "P", application: "basal" }},
-  { name: "Potash Fertilizer", category: "fertilizers", subcategory: "potassium", specifications: { nutrient: "K", application: "flowering" }},
-  { name: "Organic Compost", category: "fertilizers", subcategory: "organic", specifications: { type: "organic", application: "soil_health" }},
-  
-  // Machinery
-  { name: "Tractor (Small)", category: "machinery", subcategory: "power", specifications: { farmSize: "small", power: "25-35HP" }},
-  { name: "Combine Harvester", category: "machinery", subcategory: "harvesting", specifications: { farmSize: "large", crop: "cereal" }},
-  { name: "Seed Drill", category: "machinery", subcategory: "sowing", specifications: { farmSize: "medium", precision: "high" }},
-  { name: "Irrigation Pump", category: "machinery", subcategory: "irrigation", specifications: { waterSource: "borewell", capacity: "medium" }},
-  
-  // Pesticides
-  { name: "Insecticide (Chlorpyrifos)", category: "pesticides", subcategory: "insecticide", specifications: { target: "bollworm", crop: "cotton" }},
-  { name: "Fungicide (Mancozeb)", category: "pesticides", subcategory: "fungicide", specifications: { target: "blight", crop: "potato" }},
-  { name: "Herbicide (Glyphosate)", category: "pesticides", subcategory: "herbicide", specifications: { target: "weeds", application: "pre_emergence" }},
-  { name: "Bio-Pesticide", category: "pesticides", subcategory: "organic", specifications: { type: "neem_based", target: "aphids" }},
-];

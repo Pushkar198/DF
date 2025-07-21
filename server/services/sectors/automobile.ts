@@ -1,152 +1,189 @@
 import { GoogleGenAI } from "@google/genai";
-import { DemandItem, ContextualData, InsertPrediction } from "@shared/schema";
 import { fetchComprehensiveRegionData } from "../external-data";
-import { fetchRealEnvironmentalData } from "../real-data";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GOOGLE_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || ""
 });
 
-export interface AutomobileDemandInput {
+export interface AutomobileForecastInput {
   region: string;
   timeframe: string;
-  demographics: {
-    urbanPopulation: number;
-    ruralPopulation: number;
-    averageIncome: number;
-  };
 }
 
-export interface VehicleDemandResult {
-  vehicle: string;
-  regionType: 'urban' | 'rural';
-  fuelType: 'EV' | 'petrol' | 'diesel' | 'hybrid';
-  vehicleClass: '2-wheeler' | '4-wheeler' | 'commercial';
-  demandQuantity: number;
+export interface AutomobilePrediction {
+  itemName: string;
+  department: string;
+  category: string;
+  subcategory: string;
+  currentDemand: number;
+  predictedDemand: number;
+  demandChangePercentage: number;
+  demandTrend: string; // "increase", "decrease", "no change"
   confidence: number;
-  priceFactors: string[];
-  policyImpact: string;
-  marketTrends: string[];
+  peakPeriod: string;
   reasoning: string;
+  marketFactors: string[];
+  recommendations: string[];
+  newsImpact: string;
+  seasonalFactor: string;
+  riskLevel: string;
 }
 
-export async function generateAutomobileDemandForecast(input: AutomobileDemandInput): Promise<VehicleDemandResult[]> {
+async function fetchRealTimeData(region: string) {
   try {
-    // Fetch real-time data
-    const [comprehensiveData, environmentalData] = await Promise.all([
-      fetchComprehensiveRegionData(input.region),
-      fetchRealEnvironmentalData(input.region)
-    ]);
+    console.log(`Fetching real-time automobile data for ${region}...`);
+    
+    const comprehensiveData = await fetchComprehensiveRegionData(region);
+
+    return {
+      comprehensive: comprehensiveData,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.warn(`Warning: Could not fetch all real-time data for ${region}:`, error);
+    return {
+      comprehensive: { 
+        weather: { conditions: "Variable", temperature: 75, humidity: 60, airQuality: "Moderate" }, 
+        news: { headlines: [], healthRelated: [], diseaseOutbreaks: [] }, 
+        socialMedia: { healthTrends: [], publicSentiment: "neutral" } 
+      },
+      timestamp: new Date().toISOString()
+    };
+  }
+}
+
+export async function generateAutomobilePredictions(region: string, timeframe: string): Promise<AutomobilePrediction[]> {
+  try {
+    console.log(`🤖 Generating AI-driven automobile demand forecast for ${region}...`);
+    
+    const realTimeData = await fetchRealTimeData(region);
+    
+    // Convert timeframe to standardized periods
+    const standardizedTimeframe = timeframe.includes('15') ? '15 days' : 
+                                 timeframe.includes('30') ? '30 days' : 
+                                 timeframe.includes('60') ? '60 days' : '30 days';
 
     const prompt = `
-You are an expert automotive market analyst with access to real-time global market data. Predict vehicle demand for the specified region based on authentic data.
+You are an expert automotive industry analyst with deep knowledge of Indian automobile market trends, manufacturing data, and consumer behavior patterns.
 
-Region: ${input.region}
-Timeframe: ${input.timeframe}
-Demographics: ${JSON.stringify(input.demographics)}
+Generate professional demand predictions for automobile sector in ${region}, India for the next ${standardizedTimeframe}.
 
-REAL-TIME MARKET DATA:
-- News Headlines: ${comprehensiveData.news.headlines.join(', ')}
-- Economic Indicators: Available from news sentiment
-- Public Sentiment: ${comprehensiveData.socialMedia.publicSentiment}
+Real-time Market Context:
+${JSON.stringify(realTimeData, null, 2)}
 
-ENVIRONMENTAL FACTORS:
-- Air Quality: ${environmentalData.airQuality}
-- Population Density: ${environmentalData.populationDensity}
-- Urban vs Rural: Based on population density and region type
+AUTOMOBILE SUBCATEGORIES FOR FORECASTING:
 
-POLICY & TRENDS:
-- Social Media Trends: ${comprehensiveData.socialMedia.viralHealthTopics.join(', ')}
-- Current Market Sentiment: ${comprehensiveData.socialMedia.publicSentiment}
+1. TWO-WHEELERS:
+   - Scooters: Honda Activa, TVS Jupiter, Suzuki Access, Hero Pleasure
+   - Motorcycles (100-125cc): Hero Splendor, Bajaj Platina, Honda Shine, TVS Star City
+   - Motorcycles (150-200cc): Bajaj Pulsar, Yamaha FZ, Honda CB Hornet, TVS Apache
+   - Premium Motorcycles (250cc+): Royal Enfield Classic, KTM Duke, Bajaj Dominar
+   - Electric Two-wheelers: Ola Electric, TVS iQube, Bajaj Chetak, Hero Electric
 
-Based on this authentic data, predict vehicle demand considering:
+2. PASSENGER VEHICLES:
+   - Hatchbacks: Maruti Swift, Hyundai i20, Tata Altroz, Honda Jazz
+   - Compact Sedans: Maruti Dzire, Hyundai Aura, Honda Amaze, Tata Tigor
+   - SUVs (Compact): Maruti Brezza, Hyundai Venue, Tata Nexon, Kia Sonet
+   - SUVs (Mid-size): Hyundai Creta, Kia Seltos, MG Hector, Tata Harrier
+   - Luxury Cars: BMW 3 Series, Audi A4, Mercedes C-Class, Jaguar XE
 
-1. Region Types: urban (high density), rural (low density)
-2. Fuel Types: EV (electric), petrol, diesel, hybrid
-3. Vehicle Classes: 2-wheeler (bikes/scooters), 4-wheeler (cars/SUVs), commercial (trucks/buses)
-4. Consider government policies, fuel prices, economic indicators, environmental concerns
+3. COMMERCIAL VEHICLES:
+   - Light Commercial Vehicles: Tata Ace, Mahindra Bolero Pickup, Ashok Leyland Dost
+   - Medium Commercial Vehicles: Tata LPT, Ashok Leyland Partner, Eicher Pro
+   - Heavy Commercial Vehicles: Tata Prima, Ashok Leyland U-Truck, BharatBenz
+   - Buses: Tata Starbus, Ashok Leyland Lynx, Force Traveller
 
-For each vehicle prediction, provide:
-- Vehicle type and specifications
-- Target region type (urban/rural)
-- Fuel type preference
-- Vehicle class
-- Estimated demand quantity (units)
-- Confidence level (0-1)
-- Price and economic factors
-- Government policy impact
-- Market trends affecting demand
-- Detailed reasoning
+4. ELECTRIC VEHICLES:
+   - Electric Cars: Tata Nexon EV, MG ZS EV, Hyundai Kona, Mahindra eVerito
+   - Electric Commercial: Tata Ace EV, Mahindra Treo, Piaggio Porter Electric
+   - Charging Infrastructure: AC chargers, DC fast chargers, Home charging units
 
-Respond with JSON array:
+5. AUTOMOBILE PARTS & ACCESSORIES:
+   - Engine Components: Pistons, Valves, Gaskets, Filters (Oil, Air, Fuel)
+   - Electrical Parts: Batteries, Alternators, Starters, LED lights, ECUs
+   - Suspension & Braking: Shock absorbers, Brake pads, Disc brakes, Tyres
+   - Body Parts: Bumpers, Headlights, Mirrors, Door handles, Seat covers
+   - Performance Parts: Alloy wheels, Exhaust systems, Turbochargers
+
+6. AUTOMOTIVE LUBRICANTS & FLUIDS:
+   - Engine Oils: Castrol GTX, Mobil 1, Shell Helix, Valvoline MaxLife
+   - Gear Oils: Manual transmission fluids, Differential oils
+   - Coolants: Radiator coolants, Brake fluids, Power steering fluids
+   - Additives: Fuel additives, Engine cleaners, Rust preventives
+
+7. AUTOMOTIVE SERVICES & AFTERMARKET:
+   - Maintenance Services: Oil changes, Brake services, Tyre rotation
+   - Repair Services: Engine diagnostics, Transmission repairs, AC services
+   - Insurance Products: Vehicle insurance policies, Extended warranties
+   - Financing: Auto loans, Lease options, EMI schemes
+
+FORECASTING REQUIREMENTS:
+
+1. NEWS & MARKET INTEGRATION:
+   - Analyze recent automotive industry news affecting ${region}
+   - Consider government policies (EV subsidies, emission norms, road taxes)
+   - Factor in fuel price changes and their impact on vehicle preferences
+   - Include impact of new model launches and recalls
+   - Account for economic indicators affecting purchasing power
+
+2. DEMAND VARIATION PATTERNS:
+   - Increases: 5-35% for EVs, fuel-efficient vehicles, or policy-supported segments
+   - Decreases: 5-30% due to high fuel costs, policy restrictions, or market saturation
+   - Stable: ±5% for established models with consistent market share
+   - Include specific rationale based on market dynamics
+
+3. PROFESSIONAL FORECASTING CRITERIA:
+   - Base predictions on automotive sales data and registration trends
+   - Consider seasonal patterns (festival seasons, monsoon impact, wedding seasons)
+   - Factor in demographic trends and urbanization rates
+   - Account for infrastructure development (roads, charging stations)
+   - Include supply chain considerations and semiconductor availability
+
+4. TIMEFRAME SPECIFICATIONS:
+   - 15 days: Focus on immediate inventory needs, spare parts, consumables
+   - 30 days: Standard forecasting for vehicle sales and service demand
+   - 60 days: Strategic planning for new launches and seasonal preparation
+
+Generate exactly 10 diverse predictions covering multiple automotive segments with specific vehicle models and part specifications.
+
+Respond with JSON array in this exact format:
 [{
-  "vehicle": "string",
-  "regionType": "urban|rural",
-  "fuelType": "EV|petrol|diesel|hybrid",
-  "vehicleClass": "2-wheeler|4-wheeler|commercial",
-  "demandQuantity": number,
-  "confidence": number,
-  "priceFactors": ["factor1", "factor2"],
-  "policyImpact": "string",
-  "marketTrends": ["trend1", "trend2"],
-  "reasoning": "string"
+  "itemName": "string (specific vehicle model/part name with specifications)",
+  "department": "string (e.g., 'Passenger Vehicle Department', 'Commercial Vehicle Department', 'Two-Wheeler Department', 'Parts & Service Department')",
+  "category": "string (Two-Wheelers/Passenger Vehicles/Commercial Vehicles/Electric Vehicles/Parts & Accessories/Lubricants/Services)",
+  "subcategory": "string (specific vehicle type or part category)", 
+  "currentDemand": number (baseline units per month for region),
+  "predictedDemand": number (forecasted units for timeframe),
+  "demandChangePercentage": number (percentage change as number, e.g., 12.5 for 12.5% increase, -6.3 for 6.3% decrease),
+  "demandTrend": "string (increase/decrease/no change)",
+  "confidence": number (0.65-0.95 based on data quality),
+  "peakPeriod": "${standardizedTimeframe}",
+  "reasoning": "string (detailed market and economic rationale with percentage context)",
+  "marketFactors": ["string (specific market drivers like fuel prices, policies, economic conditions)"],
+  "recommendations": ["string (actionable business recommendations for dealers/manufacturers)"],
+  "newsImpact": "string (specific automotive news or policy affecting this item)",
+  "seasonalFactor": "string (seasonal influence like festivals, monsoon, wedding season)",
+  "riskLevel": "Low/Medium/High"
 }]
 `;
 
-    const response = await ai.generateContent({
-      model: "gemini-2.0-flash-exp",
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
+      config: {
         responseMimeType: "application/json"
       }
     });
 
-    const rawJson = response.response.text();
+    const rawJson = response.text;
     if (rawJson) {
       const predictions = JSON.parse(rawJson);
       return predictions;
     } else {
-      throw new Error("Empty response from Gemini");
+      throw new Error("Empty response from Gemini AI");
     }
   } catch (error) {
-    console.error('Error generating automobile demand forecast:', error);
-    // Fallback to basic predictions
-    return [
-      {
-        vehicle: "Electric Scooter",
-        regionType: "urban",
-        fuelType: "EV",
-        vehicleClass: "2-wheeler",
-        demandQuantity: 500,
-        confidence: 0.8,
-        priceFactors: ["EV subsidies", "Fuel price increase"],
-        policyImpact: "Government EV promotion increases demand",
-        marketTrends: ["Urban mobility shift", "Environmental awareness"],
-        reasoning: "Basic fallback prediction for electric vehicles"
-      }
-    ];
+    console.error('Error generating automobile predictions:', error);
+    throw new Error(`Failed to generate automobile demand forecast: ${error}`);
   }
 }
-
-export const automobileItems = [
-  // 2-wheelers
-  { name: "Electric Scooter", category: "vehicle", subcategory: "2-wheeler", specifications: { fuelType: "EV", regionType: "urban" }},
-  { name: "Petrol Motorcycle", category: "vehicle", subcategory: "2-wheeler", specifications: { fuelType: "petrol", regionType: "rural" }},
-  { name: "Electric Bicycle", category: "vehicle", subcategory: "2-wheeler", specifications: { fuelType: "EV", regionType: "urban" }},
-  
-  // 4-wheelers
-  { name: "Electric Car", category: "vehicle", subcategory: "4-wheeler", specifications: { fuelType: "EV", regionType: "urban" }},
-  { name: "Petrol Sedan", category: "vehicle", subcategory: "4-wheeler", specifications: { fuelType: "petrol", regionType: "urban" }},
-  { name: "Diesel SUV", category: "vehicle", subcategory: "4-wheeler", specifications: { fuelType: "diesel", regionType: "rural" }},
-  { name: "Hybrid Car", category: "vehicle", subcategory: "4-wheeler", specifications: { fuelType: "hybrid", regionType: "urban" }},
-  
-  // Commercial vehicles
-  { name: "Electric Delivery Van", category: "vehicle", subcategory: "commercial", specifications: { fuelType: "EV", regionType: "urban" }},
-  { name: "Diesel Truck", category: "vehicle", subcategory: "commercial", specifications: { fuelType: "diesel", regionType: "rural" }},
-  { name: "CNG Bus", category: "vehicle", subcategory: "commercial", specifications: { fuelType: "CNG", regionType: "urban" }},
-  
-  // Parts and accessories
-  { name: "EV Charging Station", category: "infrastructure", subcategory: "charging", specifications: { fuelType: "EV" }},
-  { name: "Vehicle Insurance", category: "service", subcategory: "insurance", specifications: { vehicleClass: "all" }},
-  { name: "Vehicle Batteries", category: "parts", subcategory: "battery", specifications: { fuelType: "EV" }},
-];

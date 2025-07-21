@@ -68,6 +68,7 @@ export default function SectorDashboard() {
   const [, setLocation] = useLocation();
   const [selectedRegion, setSelectedRegion] = useState("Mumbai");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedTimeframe, setSelectedTimeframe] = useState("30 days");
   const [isGenerating, setIsGenerating] = useState(false);
   const [lastForecast, setLastForecast] = useState<any>(null);
 
@@ -85,7 +86,7 @@ export default function SectorDashboard() {
         body: JSON.stringify({
           sector,
           region: selectedRegion,
-          timeframe: "30 days"
+          timeframe: selectedTimeframe
         })
       });
 
@@ -238,6 +239,17 @@ export default function SectorDashboard() {
             <Download className="w-4 h-4 mr-2" />
             Download Report
           </Button>
+          
+          <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Timeframe" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="15 days">15 days</SelectItem>
+              <SelectItem value="30 days">30 days</SelectItem>
+              <SelectItem value="60 days">60 days</SelectItem>
+            </SelectContent>
+          </Select>
           
           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
             <SelectTrigger className="w-48">

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generatePredictionsForRegion, getPredictionMetrics } from "./services/prediction";
-import { seedInitialSectorData } from "./services/sector-seeding";
+import { seedSectorData } from "./services/sector-seeding";
 import { analyzeMedicineRecommendations, generateInsights } from "./services/gemini";
 import { InsertEnvironmentalData } from "@shared/schema";
 import { fetchRealEnvironmentalData, fetchRealDiseaseData, fetchRealHealthData, getAvailableRegions, getRegionInfo } from "./services/real-data";
@@ -10,11 +10,11 @@ import { fetchRealTimeNews, fetchSocialMediaTrends, fetchWeatherData, fetchHospi
 import { fetchRealWeatherData, fetchRealNewsData, fetchRealSocialMediaData, fetchRealHospitalData, fetchRealDemographicData } from "./services/weather-api";
 import { generateComprehensivePredictions, savePredictionResults } from "./services/comprehensive-prediction";
 import { generateSectorDemandForecast } from "./services/multi-sector-prediction";
-import { generateComprehensiveForecast } from "./services/ai-demand-forecasting";
+import { generateAIDemandForecast } from "./services/ai-demand-forecasting";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Seed initial data
-  await seedInitialSectorData();
+  await seedSectorData();
 
   // Dashboard metrics
   app.get("/api/metrics", async (req, res) => {
@@ -112,7 +112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`🚀 Starting AI demand forecast for ${sector} in ${region}...`);
       
       // Use comprehensive AI-driven forecasting with real-time data
-      const forecast = await generateComprehensiveForecast(
+      const forecast = await generateAIDemandForecast(
         sector,
         region,
         timeframe || "30 days"

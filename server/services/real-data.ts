@@ -203,7 +203,7 @@ export interface RealHealthData {
 // Use Gemini to fetch and analyze real-time data
 export async function fetchRealEnvironmentalData(region: string): Promise<RealEnvironmentalData> {
   try {
-    const location = LOCATIONS[region];
+    const location = LOCATIONS[region as keyof typeof LOCATIONS];
     if (!location) {
       throw new Error(`Location ${region} not found in our database`);
     }
@@ -241,7 +241,7 @@ Respond with JSON in this exact format:
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -284,7 +284,7 @@ Respond with JSON in this exact format:
 
 export async function fetchRealDiseaseData(region: string): Promise<RealDiseaseData[]> {
   try {
-    const location = LOCATIONS[region];
+    const location = LOCATIONS[region as keyof typeof LOCATIONS];
     if (!location) {
       throw new Error(`Location ${region} not found in our database`);
     }
@@ -320,7 +320,7 @@ Respond with JSON array in this exact format:
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -360,7 +360,7 @@ Respond with JSON array in this exact format:
 
 export async function fetchRealHealthData(region: string): Promise<RealHealthData> {
   try {
-    const location = LOCATIONS[region];
+    const location = LOCATIONS[region as keyof typeof LOCATIONS];
     if (!location) {
       throw new Error(`Location ${region} not found in our database`);
     }
@@ -403,7 +403,7 @@ Respond with JSON in this exact format:
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -479,5 +479,5 @@ export function getAvailableRegions(): string[] {
 }
 
 export function getRegionInfo(region: string) {
-  return LOCATIONS[region];
+  return LOCATIONS[region as keyof typeof LOCATIONS];
 }

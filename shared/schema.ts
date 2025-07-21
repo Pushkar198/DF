@@ -64,9 +64,13 @@ export const alerts = pgTable("alerts", {
   userId: integer("user_id").references(() => users.id),
   predictionId: integer("prediction_id").references(() => predictions.id),
   sector: text("sector").notNull(),
+  region: text("region"),
   title: text("title").notNull(),
-  description: text("description").notNull(),
-  severity: text("severity").notNull(), // info, warning, critical
+  alertType: text("alert_type"), // supply_shortage, demand_surge, etc.
+  severity: text("severity").notNull(), // info, warning, critical, high, medium, low
+  message: text("message").notNull(),
+  itemName: text("item_name"),
+  isResolved: boolean("is_resolved").default(false),
   isRead: boolean("is_read").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

@@ -4,7 +4,7 @@ import { fetchRealEnvironmentalData, fetchRealDiseaseData, fetchRealHealthData }
 import { fetchComprehensiveRegionData } from "./external-data";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || ""
 });
 
 export interface PredictionInput {
@@ -127,7 +127,7 @@ Respond with JSON array in this exact format:
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       config: {
         responseMimeType: "application/json",
         responseSchema: {

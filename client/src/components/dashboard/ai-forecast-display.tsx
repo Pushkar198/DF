@@ -11,10 +11,13 @@ interface AIForecastDisplayProps {
     timeframe: string;
     predictions: Array<{
       itemName: string;
+      department: string;
       category: string;
+      subcategory: string;
       currentDemand: number;
       predictedDemand: number;
-      demandChange: number;
+      demandChangePercentage: number;
+      demandTrend: string;
       confidence: number;
       peakPeriod: string;
       reasoning: string;
@@ -92,7 +95,7 @@ export function AIForecastDisplay({ forecast }: AIForecastDisplayProps) {
       {/* Demand Predictions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {forecast.predictions.map((prediction, index) => {
-          const trend = getDemandTrend(prediction.demandChange);
+          const trend = getDemandTrend(prediction.demandChangePercentage);
           const TrendIcon = trend.icon;
           
           return (
@@ -100,14 +103,24 @@ export function AIForecastDisplay({ forecast }: AIForecastDisplayProps) {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{prediction.itemName}</CardTitle>
-                  <Badge variant="outline" className="text-xs">
-                    {prediction.category}
+                  <div className="flex gap-1">
+                    <Badge variant="secondary" className="text-xs">
+                      {prediction.department}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {prediction.category}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs bg-gray-50">
+                    {prediction.subcategory}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   <TrendIcon className={`w-4 h-4 ${trend.color}`} />
                   <span className={`text-sm font-medium ${trend.color}`}>
-                    {prediction.demandChange > 0 ? '+' : ''}{prediction.demandChange.toFixed(1)}%
+                    {prediction.demandChangePercentage > 0 ? '+' : ''}{prediction.demandChangePercentage.toFixed(1)}% ({prediction.demandTrend})
                   </span>
                   <span className="text-xs text-muted-foreground">vs current</span>
                 </div>
