@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || "" 
+  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface RealTimeDataSources {
@@ -88,7 +88,7 @@ async function fetchRealTimeNews(sector: string): Promise<NewsData | null> {
 async function generateWeatherDataWithGemini(region: string): Promise<WeatherData> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents: `Generate realistic current weather data for ${region}, India. 
       Consider seasonal patterns, regional climate, and current month.
       Return JSON: {"temperature": number, "humidity": number, "precipitation": number, "windSpeed": number, "conditions": "string"}`,
@@ -119,7 +119,7 @@ async function generateWeatherDataWithGemini(region: string): Promise<WeatherDat
 async function generateMarketDataWithGemini(): Promise<MarketData> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents: `Generate realistic current Indian market data including:
       - Major indices (Sensex, Nifty, Bank Nifty) with realistic values and daily changes
       - Commodity prices (Gold, Silver, Crude Oil, Rice, Wheat) in INR
@@ -177,7 +177,7 @@ async function generateMarketDataWithGemini(): Promise<MarketData> {
 async function generateNewsDataWithGemini(sector: string): Promise<NewsData> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents: `Generate realistic current news headlines and trends for ${sector} sector in India.
       Include:
       - 5 realistic current headlines
@@ -314,7 +314,7 @@ export async function getRealTimeData(sector: string, region: string): Promise<R
 async function generateEconomicDataWithGemini(): Promise<EconomicData> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents: `Generate realistic current Indian economic indicators:
       - GDP growth rate (quarterly, realistic for current conditions)
       - Inflation rate (current CPI)
@@ -347,7 +347,7 @@ async function generateEconomicDataWithGemini(): Promise<EconomicData> {
 async function generateSocialDataWithGemini(sector: string): Promise<SocialData> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents: `Generate realistic social media trends and sentiment data for ${sector} sector in India:
       - Trending topics related to the sector
       - Sentiment scores (-1 to 1) for each sector

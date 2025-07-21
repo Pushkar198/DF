@@ -70,7 +70,58 @@
 
 @layer components {
   .btn-pwc {
-    @apply bg-pwc-orange hover:bg-pwc-orange-hover text-white;
+    background-color: hsl(var(--pwc-orange));
+    color: white;
+  }
+  
+  .btn-pwc:hover {
+    background-color: hsl(var(--pwc-orange-hover));
+  }
+  
+  /* Professional Sector Dashboard Styles */
+  .sector-card-gradient {
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .sector-header-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-foreground)) 100%);
+  }
+  
+  .prediction-card {
+    transition: all 0.3s ease;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+  }
+  
+  .prediction-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary));
+  }
+  
+  .metric-card {
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%);
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  
+  .professional-header {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+    color: hsl(var(--primary-foreground));
+  }
+  
+  .sector-icon-container {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .filter-section {
+    background: hsl(var(--muted) / 0.5);
+    border: 1px solid hsl(var(--border));
+    backdrop-filter: blur(5px);
   }
   
   .text-pwc {

@@ -4,31 +4,36 @@ export async function seedSectorData() {
   console.log("Starting sector data seeding...");
   
   try {
-    // Healthcare sector items
+    // Healthcare sector items with departments
     const healthcareItems = [
-      { name: "Acetaminophen 500mg", category: "Pharmaceuticals", subcategory: "Pain Management", baselineSupply: 5000, currentPrice: 120 },
-      { name: "Amoxicillin 250mg", category: "Pharmaceuticals", subcategory: "Antibiotics", baselineSupply: 3000, currentPrice: 85 },
-      { name: "Digital Glucometer", category: "Medical Equipment", subcategory: "Diagnostic Devices", baselineSupply: 800, currentPrice: 1200 },
-      { name: "N95 Masks", category: "Medical Supplies", subcategory: "PPE", baselineSupply: 10000, currentPrice: 25 },
-      { name: "Insulin Injection", category: "Pharmaceuticals", subcategory: "Diabetes Care", baselineSupply: 1500, currentPrice: 450 }
+      { name: "Acetaminophen 500mg", department: "Emergency Department", category: "Medicines", subcategory: "Pain Management", baselineSupply: 5000, currentPrice: 120 },
+      { name: "Amoxicillin 250mg", department: "General Medicine", category: "Medicines", subcategory: "Antibiotics", baselineSupply: 3000, currentPrice: 85 },
+      { name: "Digital Glucometer", department: "Endocrinology Department", category: "Diagnostic Kits", subcategory: "Diagnostic Devices", baselineSupply: 800, currentPrice: 1200 },
+      { name: "N95 Masks", department: "Emergency Department", category: "Patient Care Items", subcategory: "PPE", baselineSupply: 10000, currentPrice: 25 },
+      { name: "Insulin Injection", department: "Endocrinology Department", category: "Medicines", subcategory: "Diabetes Care", baselineSupply: 1500, currentPrice: 450 },
+      { name: "Blood Test Kit", department: "Laboratory Department", category: "Test Kits", subcategory: "Blood Tests", baselineSupply: 2000, currentPrice: 350 },
+      { name: "ECG Machine", department: "Cardiac Department", category: "Medical Equipment", subcategory: "Monitors", baselineSupply: 50, currentPrice: 125000 },
+      { name: "Ventilator", department: "Intensive Care Unit", category: "Medical Equipment", subcategory: "Ventilators", baselineSupply: 25, currentPrice: 850000 }
     ];
 
-    // Automobile sector items
+    // Automobile sector items with departments
     const automobileItems = [
-      { name: "Honda Activa 6G", category: "Two-Wheelers", subcategory: "Scooters", baselineSupply: 200, currentPrice: 75000 },
-      { name: "Maruti Swift Dzire", category: "Passenger Vehicles", subcategory: "Compact Sedans", baselineSupply: 150, currentPrice: 600000 },
-      { name: "Car Battery", category: "Parts & Accessories", subcategory: "Electrical Parts", baselineSupply: 500, currentPrice: 5500 },
-      { name: "Engine Oil 5W-30", category: "Lubricants", subcategory: "Engine Oils", baselineSupply: 2000, currentPrice: 400 },
-      { name: "Brake Pads", category: "Parts & Accessories", subcategory: "Braking System", baselineSupply: 800, currentPrice: 1200 }
+      { name: "Honda Activa 6G", department: "Sales Department", category: "Vehicles", subcategory: "2-Wheeler", baselineSupply: 200, currentPrice: 75000 },
+      { name: "Maruti Swift Dzire", department: "Sales Department", category: "Vehicles", subcategory: "4-Wheeler", baselineSupply: 150, currentPrice: 600000 },
+      { name: "Car Battery", department: "Parts Department", category: "Spare Parts", subcategory: "Electrical Parts", baselineSupply: 500, currentPrice: 5500 },
+      { name: "Engine Oil 5W-30", department: "Service Department", category: "Accessories", subcategory: "Engine Oils", baselineSupply: 2000, currentPrice: 400 },
+      { name: "Brake Pads", department: "Parts Department", category: "Spare Parts", subcategory: "Braking System", baselineSupply: 800, currentPrice: 1200 },
+      { name: "Diagnostic Scanner", department: "Service Department", category: "Service Equipment", subcategory: "Diagnostic Equipment", baselineSupply: 75, currentPrice: 45000 }
     ];
 
-    // Agriculture sector items
+    // Agriculture sector items with departments
     const agricultureItems = [
-      { name: "Wheat Seeds HD-2967", category: "Seeds", subcategory: "Cereal Seeds", baselineSupply: 5000, currentPrice: 25 },
-      { name: "Urea Fertilizer", category: "Fertilizers", subcategory: "Nitrogen Fertilizers", baselineSupply: 8000, currentPrice: 22 },
-      { name: "Tractor Mahindra 575 DI", category: "Farm Machinery", subcategory: "Tractors", baselineSupply: 50, currentPrice: 850000 },
-      { name: "Drip Irrigation Kit", category: "Irrigation", subcategory: "Drip Systems", baselineSupply: 300, currentPrice: 15000 },
-      { name: "Cypermethrin Insecticide", category: "Crop Protection", subcategory: "Insecticides", baselineSupply: 1200, currentPrice: 280 }
+      { name: "Wheat Seeds HD-2967", department: "Crop Production", category: "Seeds", subcategory: "Cereal Seeds", baselineSupply: 5000, currentPrice: 25 },
+      { name: "Urea Fertilizer", department: "Soil Management", category: "Fertilizers", subcategory: "Nitrogen", baselineSupply: 8000, currentPrice: 22 },
+      { name: "Tractor Mahindra 575 DI", department: "Farm Management", category: "Farm Equipment", subcategory: "Tractors", baselineSupply: 50, currentPrice: 850000 },
+      { name: "Drip Irrigation Kit", department: "Irrigation Department", category: "Irrigation Equipment", subcategory: "Drip Systems", baselineSupply: 300, currentPrice: 15000 },
+      { name: "Cypermethrin Insecticide", department: "Pest Control", category: "Pesticides", subcategory: "Insecticides", baselineSupply: 1200, currentPrice: 280 },
+      { name: "Organic Compost", department: "Soil Management", category: "Fertilizers", subcategory: "Organic Fertilizers", baselineSupply: 3000, currentPrice: 35 }
     ];
 
     // Seed healthcare items
@@ -36,6 +41,7 @@ export async function seedSectorData() {
       await storage.createDemandItem({
         sector: "healthcare",
         name: item.name,
+        department: item.department,
         category: item.category,
         subcategory: item.subcategory,
         baselineSupply: item.baselineSupply,
@@ -48,6 +54,7 @@ export async function seedSectorData() {
       await storage.createDemandItem({
         sector: "automobile",
         name: item.name,
+        department: item.department,
         category: item.category,
         subcategory: item.subcategory,
         baselineSupply: item.baselineSupply,
@@ -60,6 +67,7 @@ export async function seedSectorData() {
       await storage.createDemandItem({
         sector: "agriculture",
         name: item.name,
+        department: item.department,
         category: item.category,
         subcategory: item.subcategory,
         baselineSupply: item.baselineSupply,

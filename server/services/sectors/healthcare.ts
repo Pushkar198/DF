@@ -3,7 +3,7 @@ import { fetchComprehensiveRegionData } from "../external-data";
 import { fetchRealHealthData, fetchRealDiseaseData } from "../real-data";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface HealthcareForecastInput {
@@ -58,7 +58,12 @@ async function fetchRealTimeData(region: string) {
   }
 }
 
-export async function generateHealthcarePredictions(region: string, timeframe: string): Promise<HealthcarePrediction[]> {
+export async function generateHealthcarePredictions(
+  region: string, 
+  timeframe: string, 
+  department?: string, 
+  category?: string
+): Promise<HealthcarePrediction[]> {
   try {
     console.log(`🤖 Generating AI-driven healthcare demand forecast for ${region}...`);
     
@@ -70,10 +75,24 @@ export async function generateHealthcarePredictions(region: string, timeframe: s
                                  timeframe.includes('30') ? '30 days' : 
                                  timeframe.includes('60') ? '60 days' : '30 days';
 
+    const departmentFilter = department && department !== "all" ? `
+SPECIFIC DEPARTMENT FOCUS: ${department}
+- Focus predictions specifically on items used by or managed by the ${department}
+- Prioritize department-specific demand patterns and requirements
+- Consider department workflow and operational needs` : "";
+
+    const categoryFilter = category && category !== "all" ? `
+SPECIFIC CATEGORY FOCUS: ${category}
+- Limit predictions to items in the "${category}" category only
+- Focus on category-specific market trends and demand patterns
+- Consider category-specific regulatory and supply chain factors` : "";
+
     const prompt = `
 You are an expert healthcare demand forecasting analyst with access to real-time market data, pharmaceutical intelligence, and medical sector expertise.
 
 Generate professional demand predictions for healthcare/pharmaceutical sector in ${region}, India for the next ${standardizedTimeframe}.
+${departmentFilter}
+${categoryFilter}
 
 Real-time Market Context:
 ${JSON.stringify(realTimeData, null, 2)}

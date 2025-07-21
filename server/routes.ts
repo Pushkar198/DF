@@ -104,18 +104,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate AI-driven real-time demand predictions
   app.post("/api/predictions/generate", async (req, res) => {
     try {
-      const { sector, region, timeframe } = req.body;
+      const { sector, region, timeframe, department, category } = req.body;
       if (!sector || !region) {
         return res.status(400).json({ error: "Sector and region are required" });
       }
 
-      console.log(`🚀 Starting AI demand forecast for ${sector} in ${region}...`);
+      console.log(`🚀 Starting AI demand forecast for ${sector} in ${region}${department ? ` (${department})` : ''}${category ? ` - ${category}` : ''}...`);
       
       // Use comprehensive AI-driven forecasting with real-time data
       const forecast = await generateAIDemandForecast(
         sector,
         region,
-        timeframe || "30 days"
+        timeframe || "30 days",
+        department,
+        category
       );
 
       res.json({ 

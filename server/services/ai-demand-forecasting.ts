@@ -6,7 +6,7 @@ import { generateAutomobilePredictions } from "./sectors/automobile";
 import { generateAgriculturePredictions } from "./sectors/agriculture";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "" 
+  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface SectorDemandForecast {
@@ -41,7 +41,9 @@ export interface DemandPrediction {
 export async function generateAIDemandForecast(
   sector: 'healthcare' | 'automobile' | 'agriculture',
   region: string,
-  timeframe: string = "30 days"
+  timeframe: string = "30 days",
+  department?: string,
+  category?: string
 ): Promise<SectorDemandForecast> {
   
   console.log(`🚀 Starting AI demand forecast for ${sector} in ${region}...`);
@@ -52,13 +54,13 @@ export async function generateAIDemandForecast(
   try {
     switch (sector) {
       case 'healthcare':
-        predictions = await generateHealthcarePredictions(region, timeframe);
+        predictions = await generateHealthcarePredictions(region, timeframe, department, category);
         break;
       case 'automobile':
-        predictions = await generateAutomobilePredictions(region, timeframe);
+        predictions = await generateAutomobilePredictions(region, timeframe, department, category);
         break;
       case 'agriculture':
-        predictions = await generateAgriculturePredictions(region, timeframe);
+        predictions = await generateAgriculturePredictions(region, timeframe, department, category);
         break;
       default:
         throw new Error(`Unsupported sector: ${sector}`);

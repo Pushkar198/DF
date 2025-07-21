@@ -5,7 +5,7 @@ import { storage } from "../storage";
 import { InsertPrediction, InsertAlert } from "@shared/schema";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface ComprehensivePredictionResult {
@@ -211,7 +211,7 @@ Respond with JSON in this exact format:
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       config: {
         responseMimeType: "application/json",
         responseSchema: {

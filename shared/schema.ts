@@ -32,8 +32,9 @@ export const demandItems = pgTable("demand_items", {
   id: serial("id").primaryKey(),
   sector: text("sector").notNull(), // healthcare, automobile, agriculture
   name: text("name").notNull(),
-  category: text("category").notNull(), // medicine/vehicle/seed, etc.
-  subcategory: text("subcategory"), // tablet/syrup/injection, petrol/diesel/ev, fertilizer/pesticide
+  department: text("department").notNull(), // emergency, respiratory, cardiac, neuro (healthcare), etc.
+  category: text("category").notNull(), // medicines, test kits, diagnostic kits, etc.
+  subcategory: text("subcategory"), // tablet/syrup/injection, blood test/urine test, etc.
   description: text("description"),
   specifications: jsonb("specifications"), // age_group, dosage_form, vehicle_class, etc.
   seasonalPattern: text("seasonal_pattern"),

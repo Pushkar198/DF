@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { fetchComprehensiveRegionData } from "../external-data";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface AutomobileForecastInput {
@@ -52,7 +52,12 @@ async function fetchRealTimeData(region: string) {
   }
 }
 
-export async function generateAutomobilePredictions(region: string, timeframe: string): Promise<AutomobilePrediction[]> {
+export async function generateAutomobilePredictions(
+  region: string, 
+  timeframe: string, 
+  department?: string, 
+  category?: string
+): Promise<AutomobilePrediction[]> {
   try {
     console.log(`🤖 Generating AI-driven automobile demand forecast for ${region}...`);
     
@@ -63,10 +68,24 @@ export async function generateAutomobilePredictions(region: string, timeframe: s
                                  timeframe.includes('30') ? '30 days' : 
                                  timeframe.includes('60') ? '60 days' : '30 days';
 
+    const departmentFilter = department && department !== "all" ? `
+SPECIFIC DEPARTMENT FOCUS: ${department}
+- Focus predictions specifically on items managed by or relevant to the ${department}
+- Consider department-specific operational requirements and workflows
+- Prioritize department-specific demand patterns and business needs` : "";
+
+    const categoryFilter = category && category !== "all" ? `
+SPECIFIC CATEGORY FOCUS: ${category}
+- Limit predictions to items in the "${category}" category only
+- Focus on category-specific market dynamics and consumer preferences
+- Consider category-specific regulatory and technological factors` : "";
+
     const prompt = `
 You are an expert automotive industry analyst with deep knowledge of Indian automobile market trends, manufacturing data, and consumer behavior patterns.
 
 Generate professional demand predictions for automobile sector in ${region}, India for the next ${standardizedTimeframe}.
+${departmentFilter}
+${categoryFilter}
 
 Real-time Market Context:
 ${JSON.stringify(realTimeData, null, 2)}

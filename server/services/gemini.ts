@@ -4,7 +4,7 @@ import { fetchRealEnvironmentalData, fetchRealDiseaseData, fetchRealHealthData }
 import { fetchComprehensiveRegionData } from "./external-data";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface PredictionInput {
@@ -209,7 +209,7 @@ Respond with JSON array format:
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -270,7 +270,7 @@ export async function generateInsights(predictions: Prediction[], environmentalD
 As a public health expert with access to real-time surveillance data, provide key insights and actionable recommendations for healthcare professionals based on the following comprehensive data:
 
 DISEASE PREDICTIONS:
-${predictions.map(p => `- ${p.riskLevel.toUpperCase()} risk prediction with ${p.confidence}% confidence`).join('\n')}
+${predictions.map(p => `- ${p.demandLevel.toUpperCase()} demand prediction with ${p.confidence}% confidence`).join('\n')}
 
 REAL-TIME ENVIRONMENTAL CONDITIONS:
 - Temperature: ${realEnvironmentalData.temperature}°F
@@ -298,7 +298,7 @@ Provide a comprehensive but concise summary (4-5 sentences) with actionable insi
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       contents: prompt,
     });
 

@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { fetchComprehensiveRegionData } from "../external-data";
 
 const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || ""
+  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface AgricultureForecastInput {
@@ -52,7 +52,12 @@ async function fetchRealTimeData(region: string) {
   }
 }
 
-export async function generateAgriculturePredictions(region: string, timeframe: string): Promise<AgriculturePrediction[]> {
+export async function generateAgriculturePredictions(
+  region: string, 
+  timeframe: string, 
+  department?: string, 
+  category?: string
+): Promise<AgriculturePrediction[]> {
   try {
     console.log(`🤖 Generating AI-driven agriculture demand forecast for ${region}...`);
     
@@ -63,10 +68,24 @@ export async function generateAgriculturePredictions(region: string, timeframe: 
                                  timeframe.includes('30') ? '30 days' : 
                                  timeframe.includes('60') ? '60 days' : '30 days';
 
+    const departmentFilter = department && department !== "all" ? `
+SPECIFIC DEPARTMENT FOCUS: ${department}
+- Focus predictions specifically on items managed by or relevant to the ${department}
+- Consider department-specific agricultural requirements and seasonal patterns
+- Prioritize department-specific demand patterns and farming activities` : "";
+
+    const categoryFilter = category && category !== "all" ? `
+SPECIFIC CATEGORY FOCUS: ${category}
+- Limit predictions to items in the "${category}" category only
+- Focus on category-specific agricultural trends and crop requirements
+- Consider category-specific seasonal factors and supply chain dynamics` : "";
+
     const prompt = `
 You are an expert agricultural economist and crop specialist with deep knowledge of Indian farming practices, seasonal patterns, and agri-commodity markets.
 
 Generate professional demand predictions for agriculture sector in ${region}, India for the next ${standardizedTimeframe}.
+${departmentFilter}
+${categoryFilter}
 
 Real-time Market Context:
 ${JSON.stringify(realTimeData, null, 2)}
