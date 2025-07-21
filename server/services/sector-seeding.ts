@@ -36,6 +36,26 @@ export async function seedSectorData() {
       { name: "Organic Compost", department: "Soil Management", category: "Fertilizers", subcategory: "Organic Fertilizers", baselineSupply: 3000, currentPrice: 35 }
     ];
 
+    // Retail sector items with departments
+    const retailItems = [
+      { name: "iPhone 15 Pro", department: "Electronics & Tech", category: "Electronics", subcategory: "Smartphones", baselineSupply: 500, currentPrice: 129900 },
+      { name: "Nike Air Force 1", department: "Fashion & Apparel", category: "Clothing", subcategory: "Footwear", baselineSupply: 800, currentPrice: 7500 },
+      { name: "Samsung 65'' Smart TV", department: "Electronics & Tech", category: "Home Appliances", subcategory: "Television", baselineSupply: 200, currentPrice: 85000 },
+      { name: "Organic Quinoa 1kg", department: "Food & Beverages", category: "Food Products", subcategory: "Health Foods", baselineSupply: 1500, currentPrice: 650 },
+      { name: "Yoga Mat Premium", department: "Sports & Fitness", category: "Consumer Goods", subcategory: "Fitness Equipment", baselineSupply: 600, currentPrice: 2500 },
+      { name: "Lakme Foundation", department: "Beauty & Personal Care", category: "Consumer Goods", subcategory: "Cosmetics", baselineSupply: 1200, currentPrice: 850 }
+    ];
+
+    // Energy sector items with departments
+    const energyItems = [
+      { name: "Solar Panel 320W", department: "Renewable Energy", category: "Solar Equipment", subcategory: "Photovoltaic Panels", baselineSupply: 2000, currentPrice: 12500 },
+      { name: "Wind Turbine 2MW", department: "Renewable Energy", category: "Wind Equipment", subcategory: "Wind Generators", baselineSupply: 15, currentPrice: 12500000 },
+      { name: "Lithium Battery 100kWh", department: "Energy Storage", category: "Energy Storage", subcategory: "Battery Systems", baselineSupply: 50, currentPrice: 850000 },
+      { name: "Smart Grid Meter", department: "Grid Management", category: "Grid Infrastructure", subcategory: "Monitoring", baselineSupply: 5000, currentPrice: 8500 },
+      { name: "Diesel Generator 250kVA", department: "Traditional Power", category: "Grid Infrastructure", subcategory: "Backup Power", baselineSupply: 100, currentPrice: 450000 },
+      { name: "LED Street Light 150W", department: "Energy Efficiency", category: "Grid Infrastructure", subcategory: "Street Lighting", baselineSupply: 3000, currentPrice: 2200 }
+    ];
+
     // Seed healthcare items
     for (const item of healthcareItems) {
       await storage.createDemandItem({
@@ -66,6 +86,32 @@ export async function seedSectorData() {
     for (const item of agricultureItems) {
       await storage.createDemandItem({
         sector: "agriculture",
+        name: item.name,
+        department: item.department,
+        category: item.category,
+        subcategory: item.subcategory,
+        baselineSupply: item.baselineSupply,
+        currentPrice: item.currentPrice
+      });
+    }
+
+    // Seed retail items
+    for (const item of retailItems) {
+      await storage.createDemandItem({
+        sector: "retail",
+        name: item.name,
+        department: item.department,
+        category: item.category,
+        subcategory: item.subcategory,
+        baselineSupply: item.baselineSupply,
+        currentPrice: item.currentPrice
+      });
+    }
+
+    // Seed energy items
+    for (const item of energyItems) {
+      await storage.createDemandItem({
+        sector: "energy",
         name: item.name,
         department: item.department,
         category: item.category,

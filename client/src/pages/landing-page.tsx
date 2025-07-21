@@ -59,7 +59,7 @@ export default function LandingPage() {
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
               Our AI-powered platform analyzes real-time data, market trends, and environmental patterns 
-              to forecast demand across Healthcare, Automobile, and Agriculture sectors with precision.
+              to forecast demand across Healthcare, Automobile, Agriculture, Retail, and Energy sectors with precision.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Link href="/sectors">

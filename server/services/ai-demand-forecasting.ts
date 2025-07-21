@@ -4,13 +4,15 @@ import { InsertPrediction, InsertAlert } from "@shared/schema";
 import { generateHealthcarePredictions } from "./sectors/healthcare";
 import { generateAutomobilePredictions } from "./sectors/automobile";
 import { generateAgriculturePredictions } from "./sectors/agriculture";
+import { generateRetailPredictions } from "./sectors/retail";
+import { generateEnergyPredictions } from "./sectors/energy";
 
 const ai = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
 });
 
 export interface SectorDemandForecast {
-  sector: 'healthcare' | 'automobile' | 'agriculture';
+  sector: 'healthcare' | 'automobile' | 'agriculture' | 'retail' | 'energy';
   region: string;
   timeframe: string;
   predictions: DemandPrediction[];
@@ -23,11 +25,14 @@ export interface SectorDemandForecast {
 
 export interface DemandPrediction {
   itemName: string;
+  department?: string;
   category: string;
   subcategory: string;
   currentDemand: number;
   predictedDemand: number;
   demandChange: number;
+  demandChangePercentage?: number;
+  demandTrend?: string;
   confidence: number;
   peakPeriod: string;
   reasoning: string;
@@ -39,7 +44,7 @@ export interface DemandPrediction {
 }
 
 export async function generateAIDemandForecast(
-  sector: 'healthcare' | 'automobile' | 'agriculture',
+  sector: 'healthcare' | 'automobile' | 'agriculture' | 'retail' | 'energy',
   region: string,
   timeframe: string = "30 days",
   department?: string,
@@ -61,6 +66,12 @@ export async function generateAIDemandForecast(
         break;
       case 'agriculture':
         predictions = await generateAgriculturePredictions(region, timeframe, department, category);
+        break;
+      case 'retail':
+        predictions = await generateRetailPredictions(region, timeframe, department, category);
+        break;
+      case 'energy':
+        predictions = await generateEnergyPredictions(region, timeframe, department, category);
         break;
       default:
         throw new Error(`Unsupported sector: ${sector}`);

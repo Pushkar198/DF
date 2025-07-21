@@ -37,6 +37,22 @@ const sectors = [
     icon: Sprout,
     color: "bg-green-500",
     features: ["Crop Demand", "Seasonal Patterns", "Weather Impact", "Market Prices"]
+  },
+  {
+    id: "retail",
+    name: "Retail",
+    description: "Consumer goods demand forecasting with shopping trends analysis",
+    icon: BarChart3,
+    color: "bg-purple-500",
+    features: ["Consumer Trends", "Seasonal Shopping", "Price Elasticity", "Brand Analysis"]
+  },
+  {
+    id: "energy",
+    name: "Energy",
+    description: "Energy demand forecasting with renewable and traditional sources",
+    icon: Activity,
+    color: "bg-yellow-500",
+    features: ["Power Demand", "Renewable Growth", "Grid Management", "Fuel Prices"]
   }
 ];
 

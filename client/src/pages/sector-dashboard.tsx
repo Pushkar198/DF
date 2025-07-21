@@ -94,24 +94,210 @@ const sectorConfig = {
       "Irrigation Equipment",
     ],
   },
+  retail: {
+    name: "Retail",
+    icon: BarChart3,
+    color: "bg-purple-500",
+    departments: [
+      "Fashion & Apparel",
+      "Electronics & Tech",
+      "Home & Garden",
+      "Food & Beverages",
+      "Sports & Fitness",
+      "Beauty & Personal Care",
+    ],
+    categories: [
+      "Consumer Goods",
+      "Electronics",
+      "Clothing",
+      "Food Products",
+      "Home Appliances",
+    ],
+  },
+  energy: {
+    name: "Energy",
+    icon: Activity,
+    color: "bg-yellow-500",
+    departments: [
+      "Renewable Energy",
+      "Traditional Power",
+      "Energy Storage",
+      "Grid Management",
+      "Energy Efficiency",
+      "Oil & Gas",
+    ],
+    categories: [
+      "Solar Equipment",
+      "Wind Equipment",
+      "Energy Storage",
+      "Grid Infrastructure",
+      "Fuel Products",
+    ],
+  },
 };
 
-const INDIAN_CITIES = [
-  "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad",
-  "Jaipur", "Surat", "Lucknow", "Kanpur", "Nagpur", "Indore", "Thane", "Bhopal",
-  "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara", "Ghaziabad", "Ludhiana",
-  "Agra", "Nashik", "Faridabad", "Meerut", "Rajkot", "Kalyan-Dombivli", "Vasai-Virar",
-  "Varanasi", "Srinagar", "Aurangabad", "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad",
-  "Ranchi", "Howrah", "Coimbatore", "Jabalpur", "Gwalior", "Vijayawada", "Jodhpur",
-  "Madurai", "Raipur", "Kota", "Guwahati", "Chandigarh", "Solapur", "Hubli-Dharwad",
-  "Tiruchirappalli", "Bareilly", "Mysore", "Tiruppur", "Gurgaon", "Aligarh", "Jalandhar",
-  "Bhubaneswar", "Salem", "Mira-Bhayandar", "Warangal", "Thiruvananthapuram", "Guntur",
-  "Bhiwandi", "Saharanpur", "Gorakhpur", "Bikaner", "Amravati", "Noida", "Jamshedpur",
-  "Bhilai", "Cuttack", "Firozabad", "Kochi", "Nellore", "Bhavnagar", "Dehradun", "Durgapur",
-  "Asansol", "Rourkela", "Nanded", "Kolhapur", "Ajmer", "Akola", "Gulbarga", "Jamnagar",
-  "Ujjain", "Loni", "Siliguri", "Jhansi", "Ulhasnagar", "Jammu", "Sangli-Miraj & Kupwad",
-  "Mangalore", "Erode", "Belgaum", "Ambattur", "Tirunelveli", "Malegaon", "Gaya", "Jalgaon",
-  "Udaipur", "Maheshtala"
+const GLOBAL_LOCATIONS = [
+  // India
+  "Mumbai, India",
+  "Delhi, India",
+  "Bangalore, India",
+  "Hyderabad, India",
+  "Chennai, India",
+  "Kolkata, India",
+  "Pune, India",
+  "Ahmedabad, India",
+  "Jaipur, India",
+  "Surat, India",
+  "Lucknow, India",
+  "Kanpur, India",
+  "Nagpur, India",
+  "Indore, India",
+  "Bhopal, India",
+  "Visakhapatnam, India",
+  "Patna, India",
+  "Vadodara, India",
+  "Ghaziabad, India",
+  "Ludhiana, India",
+  "Agra, India",
+  "Nashik, India",
+  "Faridabad, India",
+  "Meerut, India",
+  "Rajkot, India",
+  "Varanasi, India",
+  "Srinagar, India",
+  "Aurangabad, India",
+  "Amritsar, India",
+  "Navi Mumbai, India",
+  "Allahabad, India",
+  "Ranchi, India",
+  "Howrah, India",
+  "Coimbatore, India",
+  "Jabalpur, India",
+  "Gwalior, India",
+  "Vijayawada, India",
+  "Jodhpur, India",
+  "Madurai, India",
+  "Raipur, India",
+  "Kota, India",
+  "Guwahati, India",
+  "Chandigarh, India",
+  "Mysore, India",
+  "Tiruppur, India",
+  "Gurgaon, India",
+  "Noida, India",
+  "Kochi, India",
+  "Thiruvananthapuram, India",
+  "Bhubaneswar, India",
+  "Dehradun, India",
+  "Jammu, India",
+  "Mangalore, India",
+  "Udaipur, India",
+  
+  // Bangladesh
+  "Dhaka, Bangladesh",
+  "Chittagong, Bangladesh",
+  "Sylhet, Bangladesh",
+  "Rajshahi, Bangladesh",
+  "Khulna, Bangladesh",
+  "Barisal, Bangladesh",
+  "Rangpur, Bangladesh",
+  "Mymensingh, Bangladesh",
+  "Comilla, Bangladesh",
+  "Narayanganj, Bangladesh",
+  "Gazipur, Bangladesh",
+  "Cox's Bazar, Bangladesh",
+  "Jessore, Bangladesh",
+  "Bogra, Bangladesh",
+  "Dinajpur, Bangladesh",
+  "Pabna, Bangladesh",
+  "Jamalpur, Bangladesh",
+  "Faridpur, Bangladesh",
+  "Kushtia, Bangladesh",
+  "Tangail, Bangladesh",
+  
+  // United States
+  "New York, USA",
+  "Los Angeles, USA",
+  "Chicago, USA",
+  "Houston, USA",
+  "Phoenix, USA",
+  "Philadelphia, USA",
+  "San Antonio, USA",
+  "San Diego, USA",
+  "Dallas, USA",
+  "San Jose, USA",
+  "Austin, USA",
+  "Jacksonville, USA",
+  "Fort Worth, USA",
+  "Columbus, USA",
+  "Charlotte, USA",
+  "San Francisco, USA",
+  "Indianapolis, USA",
+  "Seattle, USA",
+  "Denver, USA",
+  "Washington DC, USA",
+  "Boston, USA",
+  "El Paso, USA",
+  "Nashville, USA",
+  "Detroit, USA",
+  "Oklahoma City, USA",
+  "Portland, USA",
+  "Las Vegas, USA",
+  "Memphis, USA",
+  "Louisville, USA",
+  "Baltimore, USA",
+  "Milwaukee, USA",
+  "Albuquerque, USA",
+  "Fresno, USA",
+  "Tucson, USA",
+  "Sacramento, USA",
+  "Mesa, USA",
+  "Kansas City, USA",
+  "Atlanta, USA",
+  "Miami, USA",
+  "Raleigh, USA",
+  "Omaha, USA",
+  "Colorado Springs, USA",
+  "Virginia Beach, USA",
+  
+  // United Kingdom
+  "London, UK",
+  "Birmingham, UK",
+  "Manchester, UK",
+  "Glasgow, UK",
+  "Liverpool, UK",
+  "Leeds, UK",
+  "Sheffield, UK",
+  "Edinburgh, UK",
+  "Bristol, UK",
+  "Leicester, UK",
+  "Coventry, UK",
+  "Hull, UK",
+  "Bradford, UK",
+  "Cardiff, UK",
+  "Belfast, UK",
+  "Nottingham, UK",
+  "Plymouth, UK",
+  "Stoke-on-Trent, UK",
+  "Wolverhampton, UK",
+  "Derby, UK",
+  "Swansea, UK",
+  "Southampton, UK",
+  "Salford, UK",
+  "Aberdeen, UK",
+  "Westminster, UK",
+  "Portsmouth, UK",
+  "York, UK",
+  "Peterborough, UK",
+  "Dundee, UK",
+  "Lancaster, UK",
+  "Oxford, UK",
+  "Newport, UK",
+  "Preston, UK",
+  "St Albans, UK",
+  "Norwich, UK",
+  "Chester, UK",
+  "Cambridge, UK"
 ];
 
 interface SectorDashboardProps {
@@ -121,7 +307,7 @@ interface SectorDashboardProps {
 export default function SectorDashboard() {
   const [, params] = useRoute("/sectors/:sector");
   const [, setLocation] = useLocation();
-  const [selectedRegion, setSelectedRegion] = useState("Mumbai");
+  const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedTimeframe, setSelectedTimeframe] = useState("30 days");
@@ -132,7 +318,7 @@ export default function SectorDashboard() {
   const config = sectorConfig[sector as keyof typeof sectorConfig];
 
   const generateAIForecast = async () => {
-    if (!config) return;
+    if (!config || !selectedRegion) return;
 
     setIsGenerating(true);
     try {
@@ -142,7 +328,8 @@ export default function SectorDashboard() {
         body: JSON.stringify({
           sector,
           region: selectedRegion,
-          department: selectedDepartment === "all" ? undefined : selectedDepartment,
+          department:
+            selectedDepartment === "all" ? undefined : selectedDepartment,
           category: selectedCategory === "all" ? undefined : selectedCategory,
           timeframe: selectedTimeframe,
         }),
@@ -165,10 +352,12 @@ export default function SectorDashboard() {
   const downloadReport = () => {
     if (!lastForecast) return;
 
-    const csvHeader = "Item Name,Category,Current Demand,Predicted Demand,Demand Change %,Confidence %,Peak Period,Reasoning\n";
+    const csvHeader =
+      "Item Name,Category,Current Demand,Predicted Demand,Demand Change %,Confidence %,Peak Period,Reasoning\n";
     const csvRows = lastForecast.predictions
-      .map((pred: any) =>
-        `"${pred.itemName}","${pred.category}",${pred.currentDemand},${pred.predictedDemand},${pred.demandChangePercentage?.toFixed(1) || 0},${(pred.confidence * 100).toFixed(1)},"${pred.peakPeriod}","${pred.reasoning?.replace(/"/g, '""') || ''}"`
+      .map(
+        (pred: any) =>
+          `"${pred.itemName}","${pred.category}",${pred.currentDemand},${pred.predictedDemand},${pred.demandChangePercentage?.toFixed(1) || 0},${(pred.confidence * 100).toFixed(1)},"${pred.peakPeriod}","${pred.reasoning?.replace(/"/g, '""') || ""}"`,
       )
       .join("\n");
 
@@ -191,7 +380,10 @@ export default function SectorDashboard() {
   const { data: predictions, isLoading: predictionsLoading } = useQuery({
     queryKey: [`/api/predictions`, sector, selectedRegion],
     queryFn: async () => {
-      const response = await fetch(`/api/predictions?sector=${sector}&region=${selectedRegion}`);
+      if (!selectedRegion) return [];
+      const response = await fetch(
+        `/api/predictions?sector=${sector}&region=${selectedRegion}`,
+      );
       if (!response.ok) throw new Error("Failed to fetch predictions");
       return response.json();
     },
@@ -222,14 +414,16 @@ export default function SectorDashboard() {
       <div className="container mx-auto p-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Sector not found</h1>
-          <Button onClick={() => setLocation("/sectors")}>Back to Sectors</Button>
+          <Button onClick={() => setLocation("/sectors")}>
+            Back to Sectors
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Professional Header Section */}
       <div className="professional-header py-12 mb-8">
         <div className="container mx-auto px-6">
@@ -255,10 +449,16 @@ export default function SectorDashboard() {
                 </p>
                 {lastForecast && (
                   <div className="flex gap-3 mt-3">
-                    <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+                    <Badge
+                      variant="secondary"
+                      className="bg-white/20 text-white border-white/30"
+                    >
                       ✓ Latest forecast: {lastForecast.timeframe}
                     </Badge>
-                    <Badge variant="outline" className="bg-white/10 text-white border-white/30">
+                    <Badge
+                      variant="outline"
+                      className="bg-white/10 text-white border-white/30"
+                    >
                       {lastForecast.predictions.length} predictions
                     </Badge>
                   </div>
@@ -269,8 +469,8 @@ export default function SectorDashboard() {
               {lastForecast && (
                 <Button
                   onClick={downloadReport}
-                  variant="outline"
-                  className="gap-2 bg-white/20 text-white border-white/30 hover:bg-white/30 hover:text-white"
+                  variant="secondary"
+                  className="gap-2 bg-white text-orange-600 border-white hover:bg-orange-50 hover:text-orange-700 font-semibold shadow-lg"
                 >
                   <Download className="h-4 w-4" />
                   Export Report
@@ -288,14 +488,17 @@ export default function SectorDashboard() {
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
-                <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Select region" />
+                <Select
+                  value={selectedRegion}
+                  onValueChange={setSelectedRegion}
+                >
+                  <SelectTrigger className="w-52">
+                    <SelectValue placeholder="Select location" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60 overflow-y-auto">
-                    {INDIAN_CITIES.map((city) => (
-                      <SelectItem key={city} value={city}>
-                        {city}
+                    {GLOBAL_LOCATIONS.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        {location}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -304,7 +507,10 @@ export default function SectorDashboard() {
 
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-muted-foreground" />
-                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                <Select
+                  value={selectedDepartment}
+                  onValueChange={setSelectedDepartment}
+                >
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
@@ -319,7 +525,10 @@ export default function SectorDashboard() {
                 </Select>
               </div>
 
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -335,7 +544,10 @@ export default function SectorDashboard() {
 
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
+                <Select
+                  value={selectedTimeframe}
+                  onValueChange={setSelectedTimeframe}
+                >
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="Timeframe" />
                   </SelectTrigger>
@@ -350,9 +562,9 @@ export default function SectorDashboard() {
 
             <Button
               onClick={generateAIForecast}
-              disabled={isGenerating}
+              disabled={isGenerating || !selectedRegion}
               size="lg"
-              className="btn-pwc gap-2 shadow-lg"
+              className="btn-pwc gap-2 shadow-lg hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? (
                 <>
@@ -381,14 +593,16 @@ export default function SectorDashboard() {
                 {itemsLoading ? "..." : demandItems?.length || 0}
               </div>
               <p className="text-xs text-muted-foreground">
-                Available in {selectedRegion}
+                Available in {selectedRegion || "selected location"}
               </p>
             </CardContent>
           </Card>
 
           <Card className="metric-card rounded-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Predictions</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Active Predictions
+              </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -403,7 +617,9 @@ export default function SectorDashboard() {
 
           <Card className="metric-card rounded-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Active Alerts
+              </CardTitle>
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -420,11 +636,7 @@ export default function SectorDashboard() {
         {/* AI Forecast Display */}
         {lastForecast && (
           <div className="mb-8">
-            <AIForecastDisplay
-              forecast={lastForecast}
-              sector={sector}
-              region={selectedRegion}
-            />
+            <AIForecastDisplay forecast={lastForecast} />
           </div>
         )}
 
@@ -456,7 +668,9 @@ export default function SectorDashboard() {
                       </div>
                     </div>
                     <Badge
-                      variant={alert.severity === "high" ? "destructive" : "secondary"}
+                      variant={
+                        alert.severity === "high" ? "destructive" : "secondary"
+                      }
                     >
                       {alert.severity}
                     </Badge>

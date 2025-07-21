@@ -4,7 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 
 // Ensure Gemini API key is available
 if (!process.env.GEMINI_API_KEY) {
-  process.env.GEMINI_API_KEY = "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI";
+  throw new Error("GEMINI_API_KEY environment variable is required for AI forecasting");
 }
 
 const app = express();
