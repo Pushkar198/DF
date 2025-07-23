@@ -1,6 +1,6 @@
 import { useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -263,87 +263,89 @@ export default function SectorDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Professional Header Section */}
-      <div className="professional-header py-12 mb-8">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setLocation("/sectors")}
-                className="text-white hover:bg-white/20 hover:text-white"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className="sector-icon-container w-16 h-16 rounded-2xl flex items-center justify-center">
-                <Icon className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold text-white mb-2">
-                  {config.name} Intelligence
-                </h1>
-                <p className="text-white/80 text-lg">
-                  Advanced AI-powered demand forecasting & market analytics
-                </p>
-                {lastForecast && (
-                  <div className="flex gap-3 mt-3">
-                    <Badge
-                      variant="secondary"
-                      className="bg-white/20 text-white border-white/30"
-                    >
-                      ✓ Latest forecast: {lastForecast.timeframe}
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className="bg-white/10 text-white border-white/30"
-                    >
-                      {lastForecast.predictions.length} predictions
-                    </Badge>
-                  </div>
-                )}
-              </div>
+      {/* Professional Header Section - Exact Match */}
+      <div className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900">
+        <div className="container mx-auto px-6 py-12">
+          <div className="flex items-center gap-6">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setLocation("/sectors")}
+              className="text-white hover:bg-white/20 hover:text-white"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className={`w-16 h-16 rounded-2xl ${config.color} flex items-center justify-center`}>
+              <Icon className="w-8 h-8 text-white" />
             </div>
-            <div className="flex items-center gap-3">
-              {lastForecast && (
-                <Button
-                  onClick={downloadReport}
-                  variant="secondary"
-                  className="gap-2 bg-white text-orange-600 border-white hover:bg-orange-50 hover:text-orange-700 font-semibold shadow-lg"
-                >
-                  <Download className="h-4 w-4" />
-                  Export Report
-                </Button>
-              )}
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-4xl font-bold text-white">
+                  {config.name}
+                </h1>
+                <Badge className="bg-green-500 text-white border-0 px-3 py-1 text-xs font-semibold">
+                  Live
+                </Badge>
+              </div>
+              <p className="text-white/80 text-lg mb-3">
+                AI-Powered Demand Intelligence & Market Analytics
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-white/70">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-sm">Real-time Analysis</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/70">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full" />
+                  <span className="text-sm">Gemini AI Active</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6">
-        {/* Enhanced Filter Section */}
-        <Card className="filter-section mb-8 p-6 rounded-xl">
-          <div className="flex flex-wrap gap-4 items-center justify-between">
-            <div className="flex flex-wrap gap-4 items-center">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <div className="w-80">
-                  <LocationPicker
-                    value={selectedRegion}
-                    onChange={setSelectedRegion}
-                    placeholder="Search for any location worldwide..."
-                  />
+      <div className="container mx-auto px-6 py-8">
+        {/* Forecast Configuration Card - Exact Match */}
+        <Card className="bg-white shadow-lg border-0 rounded-2xl mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold text-gray-800">
+              Forecast Configuration
+            </CardTitle>
+            <p className="text-gray-600 text-sm">
+              Configure your AI-powered demand forecasting parameters
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Location Section */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                  <MapPin className="h-4 w-4" />
+                  Location
                 </div>
+                <LocationPicker
+                  value={selectedRegion}
+                  onChange={setSelectedRegion}
+                  placeholder="Search any location worldwide..."
+                />
+                <p className="text-xs text-gray-500">
+                  Global location search with real-time data
+                </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-muted-foreground" />
+              {/* Department Section */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  Department
+                </div>
                 <Select
                   value={selectedDepartment}
                   onValueChange={setSelectedDepartment}
                 >
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Select department" />
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60 overflow-y-auto">
                     <SelectItem value="all">All Departments</SelectItem>
@@ -354,115 +356,165 @@ export default function SectorDashboard() {
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-gray-500">
+                  {config.departments.length} departments available
+                </p>
               </div>
 
-              <Select
-                value={selectedCategory}
-                onValueChange={setSelectedCategory}
-              >
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent className="max-h-60 overflow-y-auto">
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {config.categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Category Section */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                  <BarChart3 className="h-4 w-4" />
+                  Category
+                </div>
+                <Select
+                  value={selectedCategory}
+                  onValueChange={setSelectedCategory}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60 overflow-y-auto">
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {config.categories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">
+                  {config.categories.length} categories tracked
+                </p>
+              </div>
 
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+              {/* Forecast Period Section */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                  <Calendar className="h-4 w-4" />
+                  Forecast Period
+                </div>
                 <Select
                   value={selectedTimeframe}
                   onValueChange={setSelectedTimeframe}
                 >
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Timeframe" />
+                  <SelectTrigger>
+                    <SelectValue placeholder="30 Days Forecast" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="15 days">15 days</SelectItem>
-                    <SelectItem value="30 days">30 days</SelectItem>
-                    <SelectItem value="60 days">60 days</SelectItem>
+                    <SelectItem value="15 days">15 Days Forecast</SelectItem>
+                    <SelectItem value="30 days">30 Days Forecast</SelectItem>
+                    <SelectItem value="60 days">60 Days Forecast</SelectItem>
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-gray-500">
+                  Short to long-term predictions
+                </p>
               </div>
             </div>
 
-            <Button
-              onClick={generateAIForecast}
-              disabled={isGenerating || !selectedRegion}
-              size="lg"
-              className="btn-pwc gap-2 shadow-lg hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isGenerating ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                  Generating AI Forecast...
-                </>
-              ) : (
-                <>
-                  <BarChart3 className="w-4 h-4" />
-                  Generate AI Forecast
-                </>
-              )}
-            </Button>
-          </div>
+            {/* AI Engine Status - Exact Match */}
+            <div className="flex items-center justify-between pt-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-green-700">AI Engine Ready</span>
+              </div>
+              <Button
+                onClick={generateAIForecast}
+                disabled={isGenerating || !selectedRegion}
+                size="lg"
+                className="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold px-8 py-3 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    Generating AI Forecast...
+                  </>
+                ) : (
+                  <>
+                    <TrendingUp className="w-4 h-4 mr-2" />
+                    Generate AI Forecast
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
         </Card>
 
-        {/* Enhanced Metrics Cards */}
+        {/* Statistics Cards - Exact Match */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="metric-card rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Items</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {itemsLoading ? "..." : demandItems?.length || 0}
+          <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-gray-600 mb-1">Total Items</p>
+                  <div className="text-2xl font-bold text-gray-900">
+                    {itemsLoading ? "..." : demandItems?.length || 0}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Available inventory items
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Available in {selectedRegion || "selected location"}
-              </p>
             </CardContent>
           </Card>
 
-          <Card className="metric-card rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Active Predictions
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {predictionsLoading ? "..." : predictions?.length || 0}
+          <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-gray-600 mb-1">AI Predictions</p>
+                  <div className="text-2xl font-bold text-gray-900">
+                    {predictionsLoading ? "..." : predictions?.length || 0}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Historical forecasts
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-green-600" />
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Historical forecasts
-              </p>
             </CardContent>
           </Card>
 
-          <Card className="metric-card rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Active Alerts
-              </CardTitle>
-              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {alerts?.length || 0}
+          <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-gray-600 mb-1">System Alerts</p>
+                  <div className="text-2xl font-bold text-red-600">
+                    {alerts?.length || 0}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Requires attention
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Requires attention
-              </p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Export Button Section */}
+        {lastForecast && (
+          <div className="flex justify-end mb-8">
+            <Button
+              onClick={downloadReport}
+              variant="outline"
+              size="lg"
+              className="bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-semibold px-6 py-3 rounded-xl shadow-lg"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export Report
+            </Button>
+          </div>
+        )}
 
         {/* AI Forecast Display */}
         {lastForecast && (
@@ -471,10 +523,35 @@ export default function SectorDashboard() {
           </div>
         )}
 
-        {/* Enhanced Alerts Section */}
+        {/* Alerts Section */}
         {alerts && alerts.length > 0 && (
-          <Card className="sector-card-gradient rounded-xl">
-            
+          <Card className="bg-white shadow-lg border-0 rounded-2xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-800">
+                <AlertTriangle className="w-5 h-5 text-red-500" />
+                System Alerts
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {alerts.slice(0, 5).map((alert: any) => (
+                  <div key={alert.id} className="flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-100">
+                    <div>
+                      <p className="font-medium text-gray-900">{alert.title}</p>
+                      <p className="text-sm text-gray-600">{alert.message}</p>
+                    </div>
+                    <Badge 
+                      className={`${
+                        alert.severity === 'critical' ? 'bg-red-500' : 
+                        alert.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'
+                      } text-white`}
+                    >
+                      {alert.severity}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
           </Card>
         )}
       </div>
