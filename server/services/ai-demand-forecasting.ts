@@ -101,7 +101,7 @@ export async function generateAIDemandForecast(
     const avgConfidence = predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length;
     
     // Extract market analysis insights
-    const marketFactors = [...new Set(predictions.flatMap(p => p.marketFactors))];
+    const marketFactors = Array.from(new Set(predictions.flatMap(p => p.marketFactors)));
     const riskFactors = predictions.filter(p => p.riskLevel === 'High').map(p => p.itemName);
     const opportunities = predictions.filter(p => p.demandChange > 10).map(p => p.itemName);
 
@@ -132,7 +132,12 @@ export async function generateAIDemandForecast(
 
 async function saveForecastToDatabase(forecast: SectorDemandForecast): Promise<void> {
   try {
-    // Save predictions
+    // Clear old predictions and alerts for this sector and region
+    console.log(`🗑️  Clearing old predictions for ${forecast.sector} in ${forecast.region}...`);
+    await storage.clearPredictions(forecast.sector, forecast.region);
+    await storage.clearAlerts(forecast.sector, forecast.region);
+    
+    // Save new predictions
     for (const prediction of forecast.predictions) {
       const predictionData: InsertPrediction = {
         sector: forecast.sector,
@@ -140,7 +145,7 @@ async function saveForecastToDatabase(forecast: SectorDemandForecast): Promise<v
         itemId: null, // Will be assigned by database
         confidence: prediction.confidence,
         timeframe: forecast.timeframe,
-        demandLevel: prediction.demandChangePercentage > 0 ? 'High' : prediction.demandChangePercentage < 0 ? 'Low' : 'Stable',
+        demandLevel: (prediction.demandChangePercentage || 0) > 0 ? 'High' : (prediction.demandChangePercentage || 0) < 0 ? 'Low' : 'Stable',
         demandQuantity: Math.round(prediction.predictedDemand),
         environmentalFactors: {
           seasonalFactor: prediction.seasonalFactor,
@@ -157,23 +162,25 @@ async function saveForecastToDatabase(forecast: SectorDemandForecast): Promise<v
       await storage.createPrediction(predictionData);
     }
 
-    // Create alerts for high-risk or high-opportunity items
-    const highRiskItems = forecast.predictions.filter(p => p.riskLevel === 'High');
-    const highOpportunityItems = forecast.predictions.filter(p => p.demandChangePercentage > 20);
+    // Create alerts for high-risk or high-opportunity items (skip healthcare sector)
+    if (forecast.sector !== 'healthcare') {
+      const highRiskItems = forecast.predictions.filter(p => p.riskLevel === 'High');
+      const highOpportunityItems = forecast.predictions.filter(p => (p.demandChangePercentage || 0) > 20);
 
-    for (const item of [...highRiskItems, ...highOpportunityItems]) {
-      const alertData: InsertAlert = {
-        sector: forecast.sector,
-        region: forecast.region,
-        title: `${item.riskLevel} Risk: ${item.itemName}`,
-        alertType: item.riskLevel === 'High' ? 'supply_shortage' : 'demand_surge',
-        severity: item.riskLevel === 'High' ? 'high' : 'medium',
-        message: `${item.itemName}: ${item.reasoning}`,
-        isResolved: false,
-        itemName: item.itemName
-      };
+      for (const item of [...highRiskItems, ...highOpportunityItems]) {
+        const alertData: InsertAlert = {
+          sector: forecast.sector,
+          region: forecast.region,
+          title: `${item.riskLevel} Risk: ${item.itemName}`,
+          alertType: item.riskLevel === 'High' ? 'supply_shortage' : 'demand_surge',
+          severity: item.riskLevel === 'High' ? 'high' : 'medium',
+          message: `${item.itemName}: ${item.reasoning}`,
+          isResolved: false,
+          itemName: item.itemName
+        };
 
-      await storage.createAlert(alertData);
+        await storage.createAlert(alertData);
+      }
     }
 
   } catch (error) {

@@ -71,6 +71,120 @@ async function fetchRealTimeData(region: string) {
   }
 }
 
+function getLocationSpecificContext(cityName: string, countryName: string): string {
+  const locationProfiles: Record<string, Record<string, string>> = {
+    'India': {
+      'Delhi': `
+- **Climate**: Hot, humid summers with severe air pollution (AQI often >300)
+- **Common Health Issues**: Respiratory diseases, vector-borne illnesses (dengue, malaria), diabetes, cardiovascular disease
+- **Healthcare Infrastructure**: Major medical hub with AIIMS, advanced tertiary care
+- **Seasonal Patterns**: Monsoon-related waterborne diseases, winter respiratory issues
+- **Demographics**: Urban population, high pollution exposure, lifestyle diseases
+- **Specific Challenges**: Air quality-related asthma, heat stroke in summer, infectious disease outbreaks`,
+      
+      'Mumbai': `
+- **Climate**: Tropical, heavy monsoons, high humidity year-round
+- **Common Health Issues**: Waterborne diseases, respiratory issues, tropical infections, mental health
+- **Healthcare Infrastructure**: Commercial capital with major private hospitals
+- **Seasonal Patterns**: Monsoon flooding increases infection risk, year-round tropical diseases
+- **Demographics**: Dense urban population, economic stress factors
+- **Specific Challenges**: Leptospirosis during monsoons, air pollution, overcrowding-related diseases`,
+      
+      'Bangalore': `
+- **Climate**: Pleasant weather, moderate pollution
+- **Common Health Issues**: Lifestyle diseases, diabetes, hypertension, mental health
+- **Healthcare Infrastructure**: IT hub with good private healthcare facilities
+- **Seasonal Patterns**: Moderate seasonal variation, less extreme health impacts
+- **Demographics**: Young professional population, sedentary lifestyle
+- **Specific Challenges**: Tech industry stress, lifestyle-related metabolic disorders`,
+      
+      'Chennai': `
+- **Climate**: Hot, humid coastal climate, cyclone-prone
+- **Common Health Issues**: Heat-related illnesses, vector-borne diseases, diabetes
+- **Healthcare Infrastructure**: Major medical tourism destination
+- **Seasonal Patterns**: Cyclone season health emergencies, summer heat waves
+- **Demographics**: Aging population, diabetes belt region
+- **Specific Challenges**: Heat stroke, diabetes complications, flood-related infections`,
+      
+      'Kolkata': `
+- **Climate**: Humid subtropical, heavy monsoons
+- **Common Health Issues**: Vector-borne diseases, respiratory issues, digestive disorders
+- **Healthcare Infrastructure**: Historic medical institutions, mixed public-private
+- **Seasonal Patterns**: Monsoon increases disease transmission, winter respiratory issues
+- **Demographics**: Dense urban areas, socioeconomic disparities
+- **Specific Challenges**: Malaria, dengue, waterborne diseases, air pollution impacts`
+    },
+    
+    'UK': {
+      'London': `
+- **Climate**: Temperate maritime, mild winters, cool summers
+- **Common Health Issues**: Respiratory diseases, mental health, cardiovascular disease, diabetes
+- **Healthcare Infrastructure**: NHS-based universal healthcare, world-class hospitals
+- **Seasonal Patterns**: Winter flu seasons, spring allergies, seasonal affective disorder
+- **Demographics**: Diverse urban population, aging demographics
+- **Specific Challenges**: Mental health crisis, long NHS waiting times, winter pressures`,
+      
+      'Manchester': `
+- **Climate**: Wet, mild climate with frequent rainfall
+- **Common Health Issues**: Respiratory conditions, mental health, substance abuse, cardiovascular disease
+- **Healthcare Infrastructure**: Strong NHS foundation trusts, research hospitals
+- **Seasonal Patterns**: Winter respiratory illness peaks, damp-related health issues
+- **Demographics**: Post-industrial population, health inequalities
+- **Specific Challenges**: Industrial legacy health impacts, socioeconomic health gaps`,
+      
+      'Salford': `
+- **Climate**: Maritime temperate, high rainfall, mild temperatures
+- **Common Health Issues**: Respiratory diseases, cardiovascular conditions, mental health, obesity
+- **Healthcare Infrastructure**: Part of Greater Manchester NHS, good hospital access
+- **Seasonal Patterns**: Winter flu outbreaks, seasonal depression, damp-related conditions
+- **Demographics**: Working-class population, health deprivation challenges
+- **Specific Challenges**: Industrial pollution legacy, socioeconomic health disparities, higher chronic disease rates`
+    },
+    
+    'USA': {
+      'New York': `
+- **Climate**: Humid continental, hot summers, cold winters
+- **Common Health Issues**: Stress-related conditions, cardiovascular disease, diabetes, mental health
+- **Healthcare Infrastructure**: World-renowned medical centers, insurance-based system
+- **Seasonal Patterns**: Winter flu seasons, summer heat-related illnesses
+- **Demographics**: Dense urban population, high stress lifestyle
+- **Specific Challenges**: Healthcare costs, stress-related disorders, urban air quality`,
+      
+      'Los Angeles': `
+- **Climate**: Mediterranean, dry summers, mild winters, smog issues
+- **Common Health Issues**: Respiratory diseases from smog, skin conditions, lifestyle diseases
+- **Healthcare Infrastructure**: Major medical centers, insurance disparities
+- **Seasonal Patterns**: Fire season respiratory issues, year-round allergies
+- **Demographics**: Diverse population, significant uninsured populations
+- **Specific Challenges**: Air quality-related asthma, healthcare access inequities`
+    },
+    
+    'Bangladesh': {
+      'Dhaka': `
+- **Climate**: Tropical monsoon, hot humid summers, heavy rains
+- **Common Health Issues**: Waterborne diseases, respiratory infections, malnutrition, infectious diseases
+- **Healthcare Infrastructure**: Limited public healthcare, growing private sector
+- **Seasonal Patterns**: Monsoon flooding increases disease transmission
+- **Demographics**: Dense urban population, significant poverty
+- **Specific Challenges**: Water contamination, air pollution, limited healthcare access, infectious disease outbreaks`
+    }
+  };
+
+  const countryProfile = locationProfiles[countryName];
+  if (countryProfile && countryProfile[cityName]) {
+    return countryProfile[cityName];
+  }
+  
+  // Fallback for unknown locations
+  return `
+- **Climate**: Variable climate conditions
+- **Common Health Issues**: General population health needs
+- **Healthcare Infrastructure**: Standard healthcare facilities
+- **Seasonal Patterns**: Typical seasonal health variations
+- **Demographics**: Mixed population demographics  
+- **Specific Challenges**: Standard healthcare challenges for the region`;
+}
+
 export async function generateHealthcarePredictions(
   region: string, 
   timeframe: string, 
@@ -89,23 +203,36 @@ export async function generateHealthcarePredictions(
                                  timeframe.includes('60') ? '60 days' : '30 days';
 
     const departmentFilter = department && department !== "all" ? `
-SPECIFIC DEPARTMENT FOCUS: ${department}
-- Focus predictions specifically on items used by or managed by the ${department}
-- Prioritize department-specific demand patterns and requirements
-- Consider department workflow and operational needs` : "";
+MANDATORY DEPARTMENT RESTRICTION: ${department}
+- Generate predictions ONLY for items specifically used by ${department}
+- Each prediction must be directly relevant to ${department} operations
+- Consider only ${department}-specific workflows, equipment, and medications
+- NO items from other departments should appear in predictions` : "";
 
     const categoryFilter = category && category !== "all" ? `
-SPECIFIC CATEGORY FOCUS: ${category}
-- Limit predictions to items in the "${category}" category only
-- Focus on category-specific market trends and demand patterns
-- Consider category-specific regulatory and supply chain factors` : "";
+MANDATORY CATEGORY RESTRICTION: ${category}
+- Generate predictions ONLY for items in the "${category}" category
+- Each prediction must belong exclusively to the "${category}" category
+- NO items from other categories should appear in predictions
+- Focus only on ${category}-specific products and services` : "";
 
+    // Extract location-specific details
+    const locationParts = region.split(', ');
+    const cityName = locationParts[0] || region;
+    const countryName = locationParts[1] || 'India';
+    
+    // Define location-specific characteristics
+    const locationContext = getLocationSpecificContext(cityName, countryName);
+    
     const prompt = `
 You are an expert healthcare demand forecasting analyst with access to real-time market data, pharmaceutical intelligence, and medical sector expertise.
 
-Generate professional demand predictions for healthcare/pharmaceutical sector in ${region}, India for the next ${standardizedTimeframe}.
+Generate professional demand predictions for healthcare/pharmaceutical sector in ${cityName}, ${countryName} for the next ${standardizedTimeframe}.
 ${departmentFilter}
 ${categoryFilter}
+
+LOCATION-SPECIFIC CONTEXT FOR ${cityName.toUpperCase()}, ${countryName.toUpperCase()}:
+${locationContext}
 
 Real-time Market Context:
 ${JSON.stringify(realTimeData, null, 2)}
@@ -235,7 +362,58 @@ FORECASTING REQUIREMENTS:
    - Supply Chain Stability (0-100): Manufacturing capacity, distribution efficiency
    - Clinical Evidence Strength (0-100): Research support, medical guideline recommendations
 
-Generate exactly 10 diverse predictions covering multiple therapeutic areas with specific brand names or generic drug names.
+MANDATORY REQUIREMENTS FOR LOCATION-SPECIFIC DIVERSITY:
+
+1. **LOCATION-SPECIFIC HEALTH CHALLENGES**: Each prediction must address specific health issues prevalent in ${cityName}, ${countryName}
+   - Delhi: Air pollution respiratory issues, heat stroke medications, vector-borne disease treatments
+   - Mumbai: Monsoon-related infections, tropical disease medications, humidity-related conditions
+   - Salford, UK: Winter respiratory illnesses, depression medications, industrial health issues
+   - Jacksonville, USA: Heat-related medications, hurricane preparedness supplies, diabetes management
+
+2. **MANDATORY PRODUCT DIVERSITY**: NO REPETITION of similar products allowed
+   - Each prediction must be for a COMPLETELY DIFFERENT medication/device/supply
+   - Cover different therapeutic areas: respiratory, cardiovascular, neurological, endocrine, infectious disease, mental health, surgical, emergency, diagnostic, rehabilitation
+   - Include different dosage forms: tablets, injections, inhalers, patches, devices, surgical tools
+
+3. **DEPARTMENT-SPECIFIC PRODUCT SELECTION**:
+   ${department ? `Since department is ${department}, focus ONLY on products used by ${department}:
+   - Emergency Department: Emergency medications, resuscitation equipment, trauma supplies
+   - Cardiology Department: Heart medications, cardiac devices, monitoring equipment
+   - Respiratory Department: Pulmonary medications, oxygen equipment, lung function devices
+   - Endocrinology Department: Diabetes medications, hormone treatments, glucose monitoring
+   - Mental Health Department: Psychiatric medications, therapy equipment, assessment tools
+   - Surgery Department: Surgical instruments, anesthetics, post-operative care supplies
+   - Pediatrics Department: Child-specific medications, pediatric equipment, vaccines
+   - Oncology Department: Cancer treatments, chemotherapy drugs, radiation equipment` : 'Cover ALL departments with diverse predictions for each'}
+
+4. **CATEGORY-SPECIFIC LIMITATIONS**:
+   ${category ? `Since category is ${category}, include ONLY ${category} items:
+   - Pharmaceuticals: Medications, drugs, therapeutic compounds
+   - Medical Equipment: Devices, machines, diagnostic tools, monitoring equipment
+   - Medical Supplies: Consumables, disposables, surgical materials, protective equipment` : 'Include diverse mix of pharmaceuticals, equipment, and supplies'}
+
+5. **LOCATION-BASED DEMAND VARIATIONS**: Demand changes must reflect local conditions
+   - High pollution areas: Increased respiratory medications
+   - Hot climates: More heat-related treatments, IV fluids
+   - Cold climates: More winter illness medications, heating equipment
+   - Flood-prone areas: More infection treatments, water purification
+   - Industrial areas: More occupational health supplies
+
+LOCATION-SPECIFIC PRODUCT EXAMPLES (use these as inspiration, not exact copies):
+- ${cityName === 'Delhi' ? 'Air purifiers, N95 masks, bronchodilators for pollution, ORS for heat stroke, dengue rapid tests' : ''}
+- ${cityName === 'Mumbai' ? 'Antifungal creams for humidity, water purification tablets, leptospirosis antibiotics, IV fluids for dehydration' : ''}
+- ${cityName === 'Salford' ? 'Vitamin D supplements for low sunlight, antidepressants for seasonal depression, flu vaccines, heating pads' : ''}
+- ${cityName === 'Jacksonville' ? 'Hurricane emergency supplies, diabetes management for heat stress, electrolyte solutions, cooling blankets' : ''}
+- ${cityName === 'Dhaka' ? 'Water purification systems, cholera vaccines, flood-related infection treatments, mosquito nets' : ''}
+
+MANDATORY DIVERSITY REQUIREMENTS:
+- Use different active ingredients for each medication
+- Include different types of medical devices (diagnostic, therapeutic, monitoring)  
+- Cover different body systems (respiratory, cardiac, neurological, digestive, endocrine)
+- Include both acute and chronic condition treatments
+- Mix emergency, routine, and preventive healthcare items
+
+Generate exactly 10 COMPLETELY DIFFERENT predictions with NO product repetition. Each prediction must be for a unique healthcare item specific to ${cityName}, ${countryName}'s health challenges.
 
 Respond with JSON array in this exact format:
 [{

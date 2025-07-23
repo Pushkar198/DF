@@ -173,9 +173,45 @@ export function AIForecastDisplay({ forecast }: AIForecastDisplayProps) {
                 </div>
 
                 <div className="pt-2 border-t">
-                  <p className="text-xs text-muted-foreground mb-2">
-                    <strong>AI Reasoning:</strong> {prediction.reasoning}
-                  </p>
+                  <div className="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                    <h4 className="text-xs font-semibold text-blue-800 mb-2">🤖 AI Reasoning & Comprehensive Analysis</h4>
+                    <p className="text-xs text-gray-700 leading-relaxed mb-2">
+                      <strong>Primary Analysis:</strong> {prediction.reasoning}
+                    </p>
+                    
+                    {/* Additional justifications if available */}
+                    {prediction.marketFactors && prediction.marketFactors.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-blue-200">
+                        <p className="text-xs font-medium text-blue-700 mb-1">Supporting Market Evidence:</p>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          {prediction.marketFactors.slice(0, 3).map((factor, i) => {
+                            const cleanFactor = factor.split(' → ')[0] || factor;
+                            return (
+                              <li key={i} className="flex items-start gap-1">
+                                <span className="text-blue-500 mt-0.5">•</span>
+                                <span>{cleanFactor}</span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {/* Risk assessment */}
+                    {prediction.riskLevel && (
+                      <div className="mt-2 pt-2 border-t border-blue-200">
+                        <p className="text-xs">
+                          <span className="font-medium text-blue-700">Risk Assessment:</span>
+                          <span className={`ml-1 font-semibold ${
+                            prediction.riskLevel === 'High' ? 'text-red-600' : 
+                            prediction.riskLevel === 'Medium' ? 'text-yellow-600' : 'text-green-600'
+                          }`}>
+                            {prediction.riskLevel} Risk Level
+                          </span>
+                        </p>
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Show detailed sources if available */}
                   {prediction.detailedSources && prediction.detailedSources.length > 0 && (
@@ -191,34 +227,34 @@ export function AIForecastDisplay({ forecast }: AIForecastDisplayProps) {
                     </div>
                   )}
 
-                  {/* Market Factor Visualization */}
+                  {/* Market Factor Analysis - Human Readable */}
                   {prediction.marketFactorData && (
                     <div className="mb-3 p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
                         <BarChart3 className="w-4 h-4 text-blue-600" />
                         <span className="text-xs font-medium">Market Factor Analysis</span>
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="space-y-2 text-xs">
                         {Object.entries(prediction.marketFactorData).map(([factor, value]) => {
                           const factorLabel = factor.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                          const getFactorColor = (val: number) => {
-                            if (val >= 80) return 'bg-green-500';
-                            if (val >= 60) return 'bg-yellow-500';
-                            if (val >= 40) return 'bg-orange-500';
-                            return 'bg-red-500';
+                          const getFactorDescription = (val: number) => {
+                            if (val >= 85) return { desc: 'Excellent', color: 'text-green-700', bg: 'bg-green-50' };
+                            if (val >= 70) return { desc: 'Good', color: 'text-green-600', bg: 'bg-green-50' };
+                            if (val >= 55) return { desc: 'Moderate', color: 'text-yellow-600', bg: 'bg-yellow-50' };
+                            if (val >= 40) return { desc: 'Below Average', color: 'text-orange-600', bg: 'bg-orange-50' };
+                            return { desc: 'Poor', color: 'text-red-600', bg: 'bg-red-50' };
                           };
                           
+                          const factorInfo = getFactorDescription(value);
+                          
                           return (
-                            <div key={factor} className="space-y-1">
-                              <div className="flex justify-between">
-                                <span className="text-xs text-muted-foreground">{factorLabel}:</span>
-                                <span className="text-xs font-medium">{value}%</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                <div 
-                                  className={`h-1.5 rounded-full ${getFactorColor(value)}`}
-                                  style={{ width: `${value}%` }}
-                                />
+                            <div key={factor} className={`p-2 rounded-lg ${factorInfo.bg} border-l-4 border-l-gray-300`}>
+                              <div className="flex justify-between items-center">
+                                <span className="font-medium text-gray-700">{factorLabel}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className={`font-semibold ${factorInfo.color}`}>{factorInfo.desc}</span>
+                                  <span className="text-xs text-gray-500">({value}%)</span>
+                                </div>
                               </div>
                             </div>
                           );

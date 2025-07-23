@@ -47,33 +47,70 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pt-20 pb-16 relative overflow-hidden">
+        {/* Background Animation */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <Badge className="mb-6 bg-orange-100 text-orange-800">
-              Powered by Google Gemini AI
-            </Badge>
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              AI-Powered Demand Forecasting
-              <span className="block text-orange-500">Across All Sectors</span>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Badge className="bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 px-4 py-2 text-sm font-semibold border border-orange-300">
+                <Activity className="w-4 h-4 mr-2" />
+                Powered by Google Gemini 2.0 Flash AI
+              </Badge>
+              <Badge className="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-4 py-2 text-sm font-semibold border border-green-300">
+                <Globe className="w-4 h-4 mr-2" />
+                Global Coverage Available
+              </Badge>
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+              Next-Generation
+              <span className="block bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                Demand Intelligence
+              </span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Our AI-powered platform analyzes real-time data, market trends, and environmental patterns 
-              to forecast demand across Healthcare, Automobile, Agriculture, Retail, and Energy sectors with precision.
+            
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Transform your business decisions with AI-powered demand forecasting that analyzes 
+              <span className="font-semibold text-orange-600"> real-time global data</span>, market trends, and environmental patterns 
+              across Healthcare, Automobile, Agriculture, Retail, and Energy sectors.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">
               <Link href="/sectors">
-                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 px-8 py-3">
-                  <Play className="w-5 h-5 mr-2" />
-                  Start Forecasting
+                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-12 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200">
+                  <Play className="w-6 h-6 mr-3" />
+                  Launch Platform
                 </Button>
               </Link>
               <Link href="/analytics">
-                <Button size="lg" variant="outline" className="px-8 py-3">
-                  View Analytics
-                  <ChevronRight className="w-5 h-5 ml-2" />
+                <Button size="lg" variant="outline" className="px-12 py-4 text-lg font-semibold border-2 border-gray-300 hover:border-orange-500 hover:text-orange-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                  <BarChart3 className="w-6 h-6 mr-3" />
+                  View Live Analytics
+                  <ChevronRight className="w-6 h-6 ml-3" />
                 </Button>
               </Link>
+            </div>
+            
+            {/* Key Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="text-3xl font-bold text-orange-600 mb-2">5</div>
+                <div className="text-gray-600 font-medium">Industry Sectors</div>
+              </div>
+              <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="text-3xl font-bold text-blue-600 mb-2">200+</div>
+                <div className="text-gray-600 font-medium">Global Cities</div>
+              </div>
+              <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="text-3xl font-bold text-green-600 mb-2">24/7</div>
+                <div className="text-gray-600 font-medium">Real-time Analysis</div>
+              </div>
             </div>
           </div>
         </div>

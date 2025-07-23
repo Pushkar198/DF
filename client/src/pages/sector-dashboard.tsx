@@ -28,6 +28,7 @@ import {
 
 import { useLocation } from "wouter";
 import { AIForecastDisplay } from "@/components/dashboard/ai-forecast-display";
+import { LocationPicker } from "@/components/ui/location-picker";
 
 const sectorConfig = {
   healthcare: {
@@ -136,169 +137,7 @@ const sectorConfig = {
   },
 };
 
-const GLOBAL_LOCATIONS = [
-  // India
-  "Mumbai, India",
-  "Delhi, India",
-  "Bangalore, India",
-  "Hyderabad, India",
-  "Chennai, India",
-  "Kolkata, India",
-  "Pune, India",
-  "Ahmedabad, India",
-  "Jaipur, India",
-  "Surat, India",
-  "Lucknow, India",
-  "Kanpur, India",
-  "Nagpur, India",
-  "Indore, India",
-  "Bhopal, India",
-  "Visakhapatnam, India",
-  "Patna, India",
-  "Vadodara, India",
-  "Ghaziabad, India",
-  "Ludhiana, India",
-  "Agra, India",
-  "Nashik, India",
-  "Faridabad, India",
-  "Meerut, India",
-  "Rajkot, India",
-  "Varanasi, India",
-  "Srinagar, India",
-  "Aurangabad, India",
-  "Amritsar, India",
-  "Navi Mumbai, India",
-  "Allahabad, India",
-  "Ranchi, India",
-  "Howrah, India",
-  "Coimbatore, India",
-  "Jabalpur, India",
-  "Gwalior, India",
-  "Vijayawada, India",
-  "Jodhpur, India",
-  "Madurai, India",
-  "Raipur, India",
-  "Kota, India",
-  "Guwahati, India",
-  "Chandigarh, India",
-  "Mysore, India",
-  "Tiruppur, India",
-  "Gurgaon, India",
-  "Noida, India",
-  "Kochi, India",
-  "Thiruvananthapuram, India",
-  "Bhubaneswar, India",
-  "Dehradun, India",
-  "Jammu, India",
-  "Mangalore, India",
-  "Udaipur, India",
-  
-  // Bangladesh
-  "Dhaka, Bangladesh",
-  "Chittagong, Bangladesh",
-  "Sylhet, Bangladesh",
-  "Rajshahi, Bangladesh",
-  "Khulna, Bangladesh",
-  "Barisal, Bangladesh",
-  "Rangpur, Bangladesh",
-  "Mymensingh, Bangladesh",
-  "Comilla, Bangladesh",
-  "Narayanganj, Bangladesh",
-  "Gazipur, Bangladesh",
-  "Cox's Bazar, Bangladesh",
-  "Jessore, Bangladesh",
-  "Bogra, Bangladesh",
-  "Dinajpur, Bangladesh",
-  "Pabna, Bangladesh",
-  "Jamalpur, Bangladesh",
-  "Faridpur, Bangladesh",
-  "Kushtia, Bangladesh",
-  "Tangail, Bangladesh",
-  
-  // United States
-  "New York, USA",
-  "Los Angeles, USA",
-  "Chicago, USA",
-  "Houston, USA",
-  "Phoenix, USA",
-  "Philadelphia, USA",
-  "San Antonio, USA",
-  "San Diego, USA",
-  "Dallas, USA",
-  "San Jose, USA",
-  "Austin, USA",
-  "Jacksonville, USA",
-  "Fort Worth, USA",
-  "Columbus, USA",
-  "Charlotte, USA",
-  "San Francisco, USA",
-  "Indianapolis, USA",
-  "Seattle, USA",
-  "Denver, USA",
-  "Washington DC, USA",
-  "Boston, USA",
-  "El Paso, USA",
-  "Nashville, USA",
-  "Detroit, USA",
-  "Oklahoma City, USA",
-  "Portland, USA",
-  "Las Vegas, USA",
-  "Memphis, USA",
-  "Louisville, USA",
-  "Baltimore, USA",
-  "Milwaukee, USA",
-  "Albuquerque, USA",
-  "Fresno, USA",
-  "Tucson, USA",
-  "Sacramento, USA",
-  "Mesa, USA",
-  "Kansas City, USA",
-  "Atlanta, USA",
-  "Miami, USA",
-  "Raleigh, USA",
-  "Omaha, USA",
-  "Colorado Springs, USA",
-  "Virginia Beach, USA",
-  
-  // United Kingdom
-  "London, UK",
-  "Birmingham, UK",
-  "Manchester, UK",
-  "Glasgow, UK",
-  "Liverpool, UK",
-  "Leeds, UK",
-  "Sheffield, UK",
-  "Edinburgh, UK",
-  "Bristol, UK",
-  "Leicester, UK",
-  "Coventry, UK",
-  "Hull, UK",
-  "Bradford, UK",
-  "Cardiff, UK",
-  "Belfast, UK",
-  "Nottingham, UK",
-  "Plymouth, UK",
-  "Stoke-on-Trent, UK",
-  "Wolverhampton, UK",
-  "Derby, UK",
-  "Swansea, UK",
-  "Southampton, UK",
-  "Salford, UK",
-  "Aberdeen, UK",
-  "Westminster, UK",
-  "Portsmouth, UK",
-  "York, UK",
-  "Peterborough, UK",
-  "Dundee, UK",
-  "Lancaster, UK",
-  "Oxford, UK",
-  "Newport, UK",
-  "Preston, UK",
-  "St Albans, UK",
-  "Norwich, UK",
-  "Chester, UK",
-  "Cambridge, UK"
-];
+// Location data is now handled by the LocationPicker component
 
 interface SectorDashboardProps {
   sector: string;
@@ -488,21 +327,13 @@ export default function SectorDashboard() {
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
-                <Select
-                  value={selectedRegion}
-                  onValueChange={setSelectedRegion}
-                >
-                  <SelectTrigger className="w-52">
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60 overflow-y-auto">
-                    {GLOBAL_LOCATIONS.map((location) => (
-                      <SelectItem key={location} value={location}>
-                        {location}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="w-80">
+                  <LocationPicker
+                    value={selectedRegion}
+                    onChange={setSelectedRegion}
+                    placeholder="Search for any location worldwide..."
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -643,41 +474,7 @@ export default function SectorDashboard() {
         {/* Enhanced Alerts Section */}
         {alerts && alerts.length > 0 && (
           <Card className="sector-card-gradient rounded-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                Priority Alerts for {config.name} Sector
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {alerts.slice(0, 5).map((alert: any) => (
-                  <div
-                    key={alert.id}
-                    className="flex items-center justify-between p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full" />
-                      <div>
-                        <p className="font-medium text-red-900 dark:text-red-100">
-                          {alert.message}
-                        </p>
-                        <p className="text-sm text-red-600 dark:text-red-300">
-                          Sector: {alert.sector} • Severity: {alert.severity}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge
-                      variant={
-                        alert.severity === "high" ? "destructive" : "secondary"
-                      }
-                    >
-                      {alert.severity}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
+            
           </Card>
         )}
       </div>

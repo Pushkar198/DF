@@ -37,12 +37,14 @@ export interface IStorage {
   getPredictionById(id: number): Promise<Prediction | undefined>;
   createPrediction(prediction: InsertPrediction): Promise<Prediction>;
   getRecentPredictions(sector: string, region: string, limit?: number): Promise<Prediction[]>;
+  clearPredictions(sector: string, region: string): Promise<void>;
   
   // Alerts
   getAlerts(userId?: number, sector?: string): Promise<Alert[]>;
   getUnreadAlerts(userId: number, sector?: string): Promise<Alert[]>;
   createAlert(alert: InsertAlert): Promise<Alert>;
   markAlertAsRead(id: number): Promise<void>;
+  clearAlerts(sector: string, region: string): Promise<void>;
   
   // Contextual Data (replaces environmental data)
   getContextualData(sector: string, region: string, dataType?: string): Promise<ContextualData[]>;
@@ -155,6 +157,11 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
   }
 
+  async clearPredictions(sector: string, region: string): Promise<void> {
+    await db.delete(predictions)
+      .where(and(eq(predictions.sector, sector), eq(predictions.region, region)));
+  }
+
   async getAlerts(userId?: number, sector?: string): Promise<Alert[]> {
     let query = db.select().from(alerts);
     
@@ -191,6 +198,11 @@ export class DatabaseStorage implements IStorage {
 
   async markAlertAsRead(id: number): Promise<void> {
     await db.update(alerts).set({ isRead: true }).where(eq(alerts.id, id));
+  }
+
+  async clearAlerts(sector: string, region: string): Promise<void> {
+    await db.delete(alerts)
+      .where(and(eq(alerts.sector, sector), eq(alerts.region, region)));
   }
 
   async getContextualData(sector: string, region: string, dataType?: string): Promise<ContextualData[]> {
