@@ -13,17 +13,30 @@ export interface HealthcareForecastInput {
 
 export interface HealthcarePrediction {
   itemName: string;
+  composition: string; // Active pharmaceutical ingredients
   department: string;
   category: string;
   subcategory: string;
   currentDemand: number;
   predictedDemand: number;
+  demandUnit: string; // units/month, patients/week, etc.
+  demandChange: number; // Required for main interface compatibility
   demandChangePercentage: number;
   demandTrend: string; // "increase", "decrease", "no change"
   confidence: number;
   peakPeriod: string;
   reasoning: string;
+  detailedSources: string[]; // Specific data sources used
   marketFactors: string[];
+  marketFactorData?: {
+    environmentalImpact: number;
+    diseasePrevalence: number;
+    healthcareAccess: number;
+    economicAffordability: number;
+    policySupport: number;
+    supplyChainStability: number;
+    clinicalEvidence: number;
+  };
   recommendations: string[];
   newsImpact: string;
   seasonalFactor: string;
@@ -171,22 +184,85 @@ FORECASTING REQUIREMENTS:
    - 30 days: Standard forecasting for chronic medications and routine supplies
    - 60 days: Strategic planning for seasonal preparation and bulk procurement
 
+5. DETAILED SOURCE REQUIREMENTS:
+   Must include specific data sources for each prediction:
+   - WHO Disease Surveillance Reports for epidemiological data
+   - National Medical Devices Authority (NMDA) approvals and alerts
+   - Central Drugs Standard Control Organization (CDSCO) bulletins
+   - Indian Medical Association (IMA) clinical guidelines updates
+   - Regional health department disease monitoring systems
+   - Pharmaceutical pricing and availability data from NPPA
+   - Hospital pharmacy procurement and usage statistics
+   - Clinical research publications and medical literature
+   - Government health policy announcements and budget allocations
+   - International pharmaceutical market trends affecting India
+
+6. ELABORATIVE AI REASONING REQUIREMENTS:
+   Each prediction must include comprehensive, detailed reasoning that covers:
+   - Specific epidemiological trends and disease surveillance data analysis
+   - Detailed clinical evidence supporting demand projections
+   - Comprehensive market dynamics and competitive landscape analysis
+   - Thorough policy impact assessment with specific regulatory implications
+   - Detailed seasonal patterns and environmental factor correlations
+   - Supply chain analysis including manufacturer capacity and distribution channels
+   - Demographic shift analysis and population health trend impacts
+   - Economic factor analysis including pricing trends and affordability
+   - Technology adoption patterns and medical practice evolution
+   - Regional healthcare infrastructure capacity and accessibility factors
+   
+   Reasoning should be 3-4 detailed sentences minimum, providing deep analytical insights
+   
+7. MARKET FACTORS WITH DETAILED EXPLANATIONS:
+   Each market factor must follow this format: Factor → Reason → Source → Link
+   Example: "Respiratory Disease Increase → Air quality deteriorated by 15% due to industrial pollution → Central Pollution Control Board Report → www.cpcb.nic.in/air-quality-data"
+   
+   Required factors with explanations:
+   - Environmental Impact: Specific air quality, weather, pollution data with government monitoring sources
+   - Disease Prevalence: Current disease outbreaks, seasonal patterns with WHO/health ministry sources  
+   - Healthcare Access: Hospital capacity, infrastructure availability with health department data
+   - Economic Affordability: Medicine pricing, insurance coverage with NPPA/insurance authority sources
+   - Policy Support: Government health policies, drug approvals with ministry announcement sources
+   - Supply Chain: Manufacturing capacity, distribution issues with pharma industry reports
+   - Clinical Evidence: Latest research, medical guidelines with medical journal/association sources
+
+8. MARKET FACTORS GRAPHICAL DATA:
+   For visualization, include quantitative scores (0-100):
+   - Environmental Impact Score (0-100): Air quality, weather conditions, pollution levels
+   - Disease Prevalence Trend (0-100): Current outbreak levels, seasonal disease patterns
+   - Healthcare Access Score (0-100): Hospital capacity, medical infrastructure availability
+   - Economic Affordability Index (0-100): Pricing accessibility, insurance coverage
+   - Policy Support Level (0-100): Government initiatives, regulatory support
+   - Supply Chain Stability (0-100): Manufacturing capacity, distribution efficiency
+   - Clinical Evidence Strength (0-100): Research support, medical guideline recommendations
+
 Generate exactly 10 diverse predictions covering multiple therapeutic areas with specific brand names or generic drug names.
 
 Respond with JSON array in this exact format:
 [{
   "itemName": "string (specific medication/device name with strength/specification)",
+  "composition": "string (active pharmaceutical ingredients or device specifications)", 
   "department": "string (e.g., 'Cardiology Department', 'Emergency Department', 'Respiratory Department')",
   "category": "string (Pharmaceuticals/Medical Equipment/Medical Supplies)",
   "subcategory": "string (specific therapeutic area)", 
   "currentDemand": number (baseline units per month for region),
   "predictedDemand": number (forecasted units for timeframe),
+  "demandUnit": "string (units/month, patients/week, pieces/month, etc.)",
   "demandChangePercentage": number (percentage change as number, e.g., 15.5 for 15.5% increase, -8.2 for 8.2% decrease),
   "demandTrend": "string (increase/decrease/no change)",
   "confidence": number (0.65-0.95 based on data quality),
   "peakPeriod": "${standardizedTimeframe}",
-  "reasoning": "string (detailed clinical and market rationale with percentage context)",
-  "marketFactors": ["string (specific market drivers)"],
+  "reasoning": "string (3-4 detailed sentences covering epidemiological trends, clinical evidence, market dynamics, policy impacts, seasonal patterns, supply chain analysis, demographic factors, economic considerations, and regional healthcare infrastructure)",
+  "detailedSources": ["string (specific authoritative sources like WHO, CDSCO, IMA, hospital reports, etc.)"],
+  "marketFactors": ["string (Factor → Reason → Source → Link format, e.g., 'Respiratory Disease Increase → Air quality deteriorated by 15% → CPCB Report → www.cpcb.nic.in')"],
+  "marketFactorData": {
+    "environmentalImpact": number (0-100),
+    "diseasePrevalence": number (0-100),
+    "healthcareAccess": number (0-100),
+    "economicAffordability": number (0-100),
+    "policySupport": number (0-100),
+    "supplyChainStability": number (0-100),
+    "clinicalEvidence": number (0-100)
+  },
   "recommendations": ["string (actionable business and clinical recommendations)"],
   "newsImpact": "string (specific news or policy affecting this item)",
   "seasonalFactor": "string (seasonal disease or climate influence)",
@@ -205,7 +281,11 @@ Respond with JSON array in this exact format:
     const rawJson = response.text;
     if (rawJson) {
       const predictions = JSON.parse(rawJson);
-      return predictions;
+      // Add demandChange field for compatibility
+      return predictions.map((p: any) => ({
+        ...p,
+        demandChange: p.predictedDemand - p.currentDemand
+      }));
     } else {
       throw new Error("Empty response from Gemini AI");
     }

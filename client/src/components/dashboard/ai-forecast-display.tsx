@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Brain } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Brain, BarChart3 } from "lucide-react";
 
 interface AIForecastDisplayProps {
   forecast: {
@@ -11,17 +11,29 @@ interface AIForecastDisplayProps {
     timeframe: string;
     predictions: Array<{
       itemName: string;
+      composition?: string;
       department: string;
       category: string;
       subcategory: string;
       currentDemand: number;
       predictedDemand: number;
+      demandUnit?: string;
       demandChangePercentage: number;
       demandTrend: string;
       confidence: number;
       peakPeriod: string;
       reasoning: string;
+      detailedSources?: string[];
       marketFactors: string[];
+      marketFactorData?: {
+        environmentalImpact: number;
+        diseasePrevalence: number;
+        healthcareAccess: number;
+        economicAffordability: number;
+        policySupport: number;
+        supplyChainStability: number;
+        clinicalEvidence: number;
+      };
       recommendations: string[];
     }>;
     confidence: number;
@@ -117,6 +129,12 @@ export function AIForecastDisplay({ forecast }: AIForecastDisplayProps) {
                     {prediction.subcategory}
                   </Badge>
                 </div>
+                {/* Show composition for healthcare sector */}
+                {prediction.composition && forecast.sector === 'healthcare' && (
+                  <div className="text-xs text-muted-foreground bg-blue-50 p-2 rounded">
+                    <strong>Composition:</strong> {prediction.composition}
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <TrendIcon className={`w-4 h-4 ${trend.color}`} />
                   <span className={`text-sm font-medium ${trend.color}`}>
@@ -138,11 +156,15 @@ export function AIForecastDisplay({ forecast }: AIForecastDisplayProps) {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Current Demand:</span>
-                    <span className="font-medium">{prediction.currentDemand}/100</span>
+                    <span className="font-medium">
+                      {prediction.currentDemand.toLocaleString()} {prediction.demandUnit || 'units'}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Predicted Demand:</span>
-                    <span className="font-medium">{prediction.predictedDemand}/100</span>
+                    <span className="font-medium">
+                      {prediction.predictedDemand.toLocaleString()} {prediction.demandUnit || 'units'}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Peak Period:</span>
@@ -155,15 +177,96 @@ export function AIForecastDisplay({ forecast }: AIForecastDisplayProps) {
                     <strong>AI Reasoning:</strong> {prediction.reasoning}
                   </p>
                   
-                  {prediction.marketFactors.length > 0 && (
+                  {/* Show detailed sources if available */}
+                  {prediction.detailedSources && prediction.detailedSources.length > 0 && (
                     <div className="mb-2">
-                      <span className="text-xs font-medium">Market Factors:</span>
+                      <span className="text-xs font-medium">Data Sources:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {prediction.marketFactors.map((factor, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">
-                            {factor}
+                        {prediction.detailedSources.map((source, i) => (
+                          <Badge key={i} variant="outline" className="text-xs bg-green-50">
+                            {source}
                           </Badge>
                         ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Market Factor Visualization */}
+                  {prediction.marketFactorData && (
+                    <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <BarChart3 className="w-4 h-4 text-blue-600" />
+                        <span className="text-xs font-medium">Market Factor Analysis</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        {Object.entries(prediction.marketFactorData).map(([factor, value]) => {
+                          const factorLabel = factor.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                          const getFactorColor = (val: number) => {
+                            if (val >= 80) return 'bg-green-500';
+                            if (val >= 60) return 'bg-yellow-500';
+                            if (val >= 40) return 'bg-orange-500';
+                            return 'bg-red-500';
+                          };
+                          
+                          return (
+                            <div key={factor} className="space-y-1">
+                              <div className="flex justify-between">
+                                <span className="text-xs text-muted-foreground">{factorLabel}:</span>
+                                <span className="text-xs font-medium">{value}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                <div 
+                                  className={`h-1.5 rounded-full ${getFactorColor(value)}`}
+                                  style={{ width: `${value}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {prediction.marketFactors.length > 0 && (
+                    <div className="mb-3">
+                      <span className="text-xs font-medium">Market Factors:</span>
+                      <div className="mt-2 space-y-2">
+                        {prediction.marketFactors.map((factor, i) => {
+                          // Parse Factor → Reason → Source → Link format
+                          const parts = factor.split(' → ');
+                          if (parts.length >= 3) {
+                            const [factorName, reason, source, link] = parts;
+                            return (
+                              <div key={i} className="p-2 bg-blue-50 rounded-lg border-l-4 border-blue-200">
+                                <div className="text-xs space-y-1">
+                                  <div className="font-semibold text-blue-800">{factorName}</div>
+                                  <div className="text-gray-700">{reason}</div>
+                                  <div className="flex items-center gap-2 text-xs">
+                                    <span className="font-medium text-green-700">Source:</span>
+                                    <span className="text-green-600">{source}</span>
+                                    {link && (
+                                      <a 
+                                        href={link.startsWith('http') ? link : `https://${link}`} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:text-blue-800 underline"
+                                      >
+                                        View Source
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          } else {
+                            // Fallback for factors not in the new format
+                            return (
+                              <Badge key={i} variant="outline" className="text-xs">
+                                {factor}
+                              </Badge>
+                            );
+                          }
+                        })}
                       </div>
                     </div>
                   )}

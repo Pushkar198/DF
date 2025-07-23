@@ -17,11 +17,14 @@ export interface AgriculturePrediction {
   subcategory: string;
   currentDemand: number;
   predictedDemand: number;
+  demandUnit: string; // kg/month, hectares/season, units/month, etc.
+  demandChange: number; // Required for main interface compatibility
   demandChangePercentage: number;
   demandTrend: string; // "increase", "decrease", "no change"
   confidence: number;
   peakPeriod: string;
   reasoning: string;
+  detailedSources: string[]; // Specific data sources used
   marketFactors: string[];
   recommendations: string[];
   newsImpact: string;
@@ -188,8 +191,8 @@ Respond with JSON array in this exact format:
   "demandTrend": "string (increase/decrease/no change)",
   "confidence": number (0.65-0.95 based on data quality),
   "peakPeriod": "${standardizedTimeframe}",
-  "reasoning": "string (detailed agricultural and market rationale with percentage context)",
-  "marketFactors": ["string (specific agricultural drivers like weather, MSP, subsidies, crop cycles)"],
+  "reasoning": "string (detailed agricultural and market rationale with percentage context)", 
+  "marketFactors": ["string (Factor → Reason → Source → Link format, e.g., 'Monsoon Forecast → Normal rainfall predicted increasing seed demand by 20% → India Meteorological Department → www.imd.gov.in')"],
   "recommendations": ["string (actionable recommendations for farmers/dealers/manufacturers)"],
   "newsImpact": "string (specific agricultural news or policy affecting this item)",
   "seasonalFactor": "string (seasonal agricultural influence like sowing, harvesting, monsoon)",
@@ -208,7 +211,11 @@ Respond with JSON array in this exact format:
     const rawJson = response.text;
     if (rawJson) {
       const predictions = JSON.parse(rawJson);
-      return predictions;
+      // Add demandChange field for compatibility
+      return predictions.map((p: any) => ({
+        ...p,
+        demandChange: p.predictedDemand - p.currentDemand
+      }));
     } else {
       throw new Error("Empty response from Gemini AI");
     }

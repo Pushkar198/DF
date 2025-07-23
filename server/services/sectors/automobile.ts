@@ -17,11 +17,14 @@ export interface AutomobilePrediction {
   subcategory: string;
   currentDemand: number;
   predictedDemand: number;
+  demandUnit: string; // vehicles/month, units/month, etc.
+  demandChange: number; // Required for main interface compatibility
   demandChangePercentage: number;
   demandTrend: string; // "increase", "decrease", "no change"
   confidence: number;
   peakPeriod: string;
   reasoning: string;
+  detailedSources: string[]; // Specific data sources used
   marketFactors: string[];
   recommendations: string[];
   newsImpact: string;
@@ -178,7 +181,7 @@ Respond with JSON array in this exact format:
   "confidence": number (0.65-0.95 based on data quality),
   "peakPeriod": "${standardizedTimeframe}",
   "reasoning": "string (detailed market and economic rationale with percentage context)",
-  "marketFactors": ["string (specific market drivers like fuel prices, policies, economic conditions)"],
+  "marketFactors": ["string (Factor → Reason → Source → Link format, e.g., 'Fuel Price Impact → Petrol prices increased 8% → Ministry of Petroleum → www.petroleum.nic.in')"],
   "recommendations": ["string (actionable business recommendations for dealers/manufacturers)"],
   "newsImpact": "string (specific automotive news or policy affecting this item)",
   "seasonalFactor": "string (seasonal influence like festivals, monsoon, wedding season)",
@@ -197,7 +200,11 @@ Respond with JSON array in this exact format:
     const rawJson = response.text;
     if (rawJson) {
       const predictions = JSON.parse(rawJson);
-      return predictions;
+      // Add demandChange field for compatibility
+      return predictions.map((p: any) => ({
+        ...p,
+        demandChange: p.predictedDemand - p.currentDemand
+      }));
     } else {
       throw new Error("Empty response from Gemini AI");
     }

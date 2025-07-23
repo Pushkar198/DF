@@ -50,12 +50,15 @@ Return exactly 10 energy demand predictions in this JSON format:
       "subcategory": "Photovoltaic Panels",
       "currentDemand": 2000,
       "predictedDemand": 2600,
+      "demandUnit": "units/month",
       "demandChangePercentage": 30.0,
       "demandTrend": "increase",
       "confidence": 0.88,
       "peakPeriod": "30 days",
-      "reasoning": "Strong government push for solar installations and decreasing panel costs drive residential and commercial adoption.",
-      "marketFactors": ["Government subsidies", "Falling costs", "Grid independence"],
+      "reasoning": "Strong government push for solar installations and decreasing panel costs drive residential and commercial adoption. Based on Ministry of New and Renewable Energy data and solar industry reports.",
+      "demandUnit": "units/month",
+      "detailedSources": ["Ministry of New and Renewable Energy", "Solar Power Developers Association", "Central Electricity Authority", "National Solar Mission reports"],
+      "marketFactors": ["Solar Policy Support → PM Kusum scheme provides 30% subsidy for rooftop solar → Ministry of New and Renewable Energy → www.mnre.gov.in", "Cost Reduction → Solar panel prices dropped 15% in 2024 → Solar Power Association → www.solarpower.org.in", "Grid Independence → Power outages increased demand for backup solar systems → Central Electricity Authority → www.cea.nic.in"],
       "recommendations": ["Increase panel inventory", "Focus on residential sector", "Partner with installers"],
       "newsImpact": "New solar policy announcements boost market confidence",
       "seasonalFactor": "Pre-monsoon installation rush before rainy season",
@@ -64,7 +67,44 @@ Return exactly 10 energy demand predictions in this JSON format:
   ]
 }
 
-Focus on realistic current demand numbers, accurate energy sector pricing for ${region}, and practical energy infrastructure insights. Include mix from renewable to traditional energy sources.`;
+Focus on realistic current demand numbers, accurate energy sector pricing for ${region}, and practical energy infrastructure insights. Include mix from renewable to traditional energy sources.
+
+ELABORATIVE REASONING REQUIREMENTS:
+Each prediction must include comprehensive 3-4 sentence reasoning covering energy policy analysis, grid infrastructure impact, environmental regulations, technology adoption patterns, economic feasibility, and regional energy security considerations.
+
+MARKET FACTORS WITH DETAILED EXPLANATIONS:
+Each market factor must follow this format: Factor → Reason → Source → Link
+Example: "Solar Policy Support → PM Kusum scheme provides 30% subsidy for rooftop solar → Ministry of New and Renewable Energy → www.mnre.gov.in/solar-scheme"
+
+Required factors with explanations:
+- Policy Support: Government incentives, subsidies with ministry announcement sources
+- Technology Adoption: Market readiness, adoption rates with industry survey sources
+- Environmental Impact: Carbon reduction, sustainability goals with environment ministry sources
+- Economic Affordability: Cost competitiveness, ROI calculations with energy authority sources
+- Infrastructure Readiness: Grid capacity, installation feasibility with power ministry sources
+- Supply Chain: Equipment availability, delivery reliability with manufacturing reports
+- Regulatory Environment: Compliance requirements, policy stability with regulatory body sources
+
+MARKET FACTOR GRAPHICAL DATA:
+Include quantitative market factor data for visualization:
+- Policy Support (0-100): Government incentives and regulatory support
+- Technology Adoption (0-100): Market readiness for new energy technologies
+- Environmental Impact (0-100): Sustainability and carbon reduction benefits
+- Economic Affordability (0-100): Cost competitiveness and ROI potential
+- Infrastructure Readiness (0-100): Grid capacity and installation feasibility
+- Supply Chain Stability (0-100): Equipment availability and delivery reliability
+- Regulatory Environment (0-100): Compliance ease and policy stability
+
+Add these fields to each prediction:
+"marketFactorData": {
+  "policySupport": number (0-100),
+  "technologyAdoption": number (0-100),
+  "environmentalImpact": number (0-100),
+  "economicAffordability": number (0-100),
+  "infrastructureReadiness": number (0-100),
+  "supplyChainStability": number (0-100),
+  "regulatoryEnvironment": number (0-100)
+}`;
 
   try {
     const response = await ai.models.generateContent({

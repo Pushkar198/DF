@@ -49,12 +49,15 @@ Return exactly 10 retail demand predictions in this JSON format:
       "subcategory": "Smartphones",
       "currentDemand": 500,
       "predictedDemand": 650,
+      "demandUnit": "units/month",
       "demandChangePercentage": 30.0,
       "demandTrend": "increase",
       "confidence": 0.85,
       "peakPeriod": "30 days",
-      "reasoning": "High demand due to premium features and festival season approaching. Apple brand loyalty strong in tier-1 cities.",
-      "marketFactors": ["Festival season", "Brand loyalty", "Premium segment growth"],
+      "reasoning": "High demand due to premium features and festival season approaching. Apple brand loyalty strong in tier-1 cities. Based on consumer electronics sales data and retailer reports.",
+      "demandUnit": "units/month",
+      "detailedSources": ["Retailers Association of India", "Consumer Electronics and Appliances Manufacturers Association", "E-commerce sales analytics", "Urban consumer surveys"],
+      "marketFactors": ["Festival Season Demand → Diwali shopping increases electronics sales by 40% → Retailers Association Report → www.rai.net.in", "Brand Loyalty → Apple brand preference increased 25% in metro cities → Consumer Survey 2024 → www.consumerreports.in", "Premium Segment Growth → High-end smartphone market grew 35% → Industry Analysis → www.marketresearch.in"],
       "recommendations": ["Increase inventory for festival season", "Target premium customers", "Bundle with accessories"],
       "newsImpact": "Apple's latest launch creates strong demand in metropolitan areas",
       "seasonalFactor": "Festival season increases electronics purchases significantly",
@@ -63,7 +66,44 @@ Return exactly 10 retail demand predictions in this JSON format:
   ]
 }
 
-Focus on realistic current demand numbers, accurate pricing for ${region}, and practical business insights. Include mix of categories from electronics to fashion to FMCG products.`;
+Focus on realistic current demand numbers, accurate pricing for ${region}, and practical business insights. Include mix of categories from electronics to fashion to FMCG products.
+
+ELABORATIVE REASONING REQUIREMENTS:
+Each prediction must include comprehensive 3-4 sentence reasoning covering consumer behavior analysis, market trends, competitive landscape, economic factors, seasonal patterns, brand positioning, and regional preferences.
+
+MARKET FACTORS WITH DETAILED EXPLANATIONS:
+Each market factor must follow this format: Factor → Reason → Source → Link
+Example: "Festival Season Demand → Diwali shopping increases electronics sales by 40% → Retailers Association Report → www.rai.net.in/festival-sales"
+
+Required factors with explanations:
+- Market Demand: Current market size, growth trends with industry association sources
+- Seasonal Trends: Festival seasons, shopping patterns with retail analytics sources
+- Competition Level: Market saturation, competitive intensity with market research sources  
+- Economic Affordability: Consumer spending power, price sensitivity with economic survey sources
+- Policy Support: Trade policies, taxation changes with government announcement sources
+- Supply Chain: Inventory availability, logistics efficiency with industry reports
+- Consumer Sentiment: Brand perception, purchase intent with consumer survey sources
+
+MARKET FACTOR GRAPHICAL DATA:
+Include quantitative market factor data for visualization:
+- Market Demand (0-100): Overall market size and growth potential
+- Seasonal Trends (0-100): Seasonal impact and timing factors
+- Competition Level (0-100): Market saturation and competitive intensity
+- Economic Affordability (0-100): Price accessibility and consumer spending power
+- Policy Support (0-100): Government regulations and trade policies
+- Supply Chain Stability (0-100): Inventory availability and distribution efficiency
+- Consumer Sentiment (0-100): Brand perception and purchase intent
+
+Add these fields to each prediction:
+"marketFactorData": {
+  "marketDemand": number (0-100),
+  "seasonalTrends": number (0-100),
+  "competitionLevel": number (0-100),
+  "economicAffordability": number (0-100),
+  "policySupport": number (0-100),
+  "supplyChainStability": number (0-100),
+  "consumerSentiment": number (0-100)
+}`;
 
   try {
     const response = await ai.models.generateContent({

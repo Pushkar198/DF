@@ -25,18 +25,38 @@ export interface SectorDemandForecast {
 
 export interface DemandPrediction {
   itemName: string;
+  composition?: string; // For healthcare - active pharmaceutical ingredients
   department?: string;
   category: string;
   subcategory: string;
   currentDemand: number;
   predictedDemand: number;
+  demandUnit?: string; // units/month, patients/week, etc.
   demandChange: number;
   demandChangePercentage?: number;
   demandTrend?: string;
   confidence: number;
   peakPeriod: string;
   reasoning: string;
+  detailedSources?: string[]; // Specific data sources used
   marketFactors: string[];
+  marketFactorData?: {
+    environmentalImpact?: number;
+    diseasePrevalence?: number;
+    healthcareAccess?: number;
+    economicAffordability?: number;
+    policySupport?: number;
+    supplyChainStability?: number;
+    clinicalEvidence?: number;
+    // For other sectors
+    marketDemand?: number;
+    seasonalTrends?: number;
+    competitionLevel?: number;
+    technologyAdoption?: number;
+    regulatoryEnvironment?: number;
+    consumerSentiment?: number;
+    infrastructureReadiness?: number;
+  };
   recommendations: string[];
   newsImpact: string;
   seasonalFactor: string;

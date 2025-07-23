@@ -4,12 +4,14 @@ import { eq, desc, and } from "drizzle-orm";
 import ConnectPgSimple from "connect-pg-simple";
 import session from "express-session";
 import { pool } from "./db";
-
-const {
-  users, sectors, demandItems, predictions, alerts, contextualData, reports,
+import type { 
   User, InsertUser, Sector, InsertSector, DemandItem, InsertDemandItem,
   Prediction, InsertPrediction, Alert, InsertAlert, ContextualData, InsertContextualData,
-  Report, InsertReport
+  Report, InsertReport 
+} from "@shared/schema";
+
+const {
+  users, sectors, demandItems, predictions, alerts, contextualData, reports
 } = schema;
 
 export interface IStorage {
