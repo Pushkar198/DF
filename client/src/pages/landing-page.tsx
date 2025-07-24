@@ -1,18 +1,24 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  TrendingUp, 
-  Shield, 
-  Globe, 
-  Brain, 
+import {
+  TrendingUp,
+  Shield,
+  Globe,
+  Brain,
   Activity,
   Users,
   BarChart3,
   AlertTriangle,
   ChevronRight,
-  Play
+  Play,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -27,15 +33,28 @@ export default function LandingPage() {
                 <Activity className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">DemandCast AI</h1>
-                <p className="text-xs text-gray-500">Multi-Sector Demand Forecasting</p>
+                <h1 className="text-xl font-bold text-gray-900">
+                  DemandCast AI
+                </h1>
+                <p className="text-xs text-gray-500">
+                  Multi-Sector Demand Forecasting
+                </p>
               </div>
             </div>
-            
+
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-gray-900">Features</a>
-              <a href="#how-it-works" className="text-gray-600 hover:text-gray-900">How It Works</a>
-              <a href="#contact" className="text-gray-600 hover:text-gray-900">Contact</a>
+              <a href="#features" className="text-gray-600 hover:text-gray-900">
+                Features
+              </a>
+              <a
+                href="#how-it-works"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                How It Works
+              </a>
+              <a href="#contact" className="text-gray-600 hover:text-gray-900">
+                Contact
+              </a>
               <Link href="/dashboard">
                 <Button className="bg-orange-500 hover:bg-orange-600">
                   Launch Platform
@@ -54,7 +73,7 @@ export default function LandingPage() {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
           <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 mb-6">
@@ -67,49 +86,69 @@ export default function LandingPage() {
                 Global Coverage Available
               </Badge>
             </div>
-            
+
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
               Next-Generation
               <span className="block bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
                 Demand Intelligence
               </span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Transform your business decisions with AI-powered demand forecasting that analyzes 
-              <span className="font-semibold text-orange-600"> real-time global data</span>, market trends, and environmental patterns 
-              across Healthcare, Automobile, Agriculture, Retail, and Energy sectors.
+              Transform your business decisions with AI-powered demand
+              forecasting that analyzes
+              <span className="font-semibold text-orange-600">
+                {" "}
+                real-time global data
+              </span>
+              , market trends, and environmental patterns across Healthcare,
+              Automobile, Agriculture, Retail, and Energy sectors.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">
               <Link href="/sectors">
-                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-12 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-12 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+                >
                   <Play className="w-6 h-6 mr-3" />
                   Launch Platform
                 </Button>
               </Link>
               <Link href="/analytics">
-                <Button size="lg" variant="outline" className="px-12 py-4 text-lg font-semibold border-2 border-gray-300 hover:border-orange-500 hover:text-orange-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="px-12 py-4 text-lg font-semibold border-2 border-gray-300 hover:border-orange-500 hover:text-orange-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
                   <BarChart3 className="w-6 h-6 mr-3" />
                   View Live Analytics
                   <ChevronRight className="w-6 h-6 ml-3" />
                 </Button>
               </Link>
             </div>
-            
+
             {/* Key Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
                 <div className="text-3xl font-bold text-orange-600 mb-2">5</div>
-                <div className="text-gray-600 font-medium">Industry Sectors</div>
+                <div className="text-gray-600 font-medium">
+                  Industry Sectors
+                </div>
               </div>
               <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="text-3xl font-bold text-blue-600 mb-2">200+</div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">
+                  200+
+                </div>
                 <div className="text-gray-600 font-medium">Global Cities</div>
               </div>
               <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="text-3xl font-bold text-green-600 mb-2">24/7</div>
-                <div className="text-gray-600 font-medium">Real-time Analysis</div>
+                <div className="text-3xl font-bold text-green-600 mb-2">
+                  24/7
+                </div>
+                <div className="text-gray-600 font-medium">
+                  Real-time Analysis
+                </div>
               </div>
             </div>
           </div>
@@ -124,10 +163,11 @@ export default function LandingPage() {
               Multi-Sector Demand Intelligence
             </h2>
             <p className="text-xl text-gray-600">
-              Comprehensive analysis using multiple data sources for accurate demand forecasting
+              Comprehensive analysis using multiple data sources for accurate
+              demand forecasting
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
@@ -136,7 +176,8 @@ export default function LandingPage() {
                 </div>
                 <CardTitle>Real-Time Forecasts</CardTitle>
                 <CardDescription>
-                  Short and long-term demand forecasts based on live market and environmental data
+                  Short and long-term demand forecasts based on live market and
+                  environmental data
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -148,7 +189,8 @@ export default function LandingPage() {
                 </div>
                 <CardTitle>Market Intelligence</CardTitle>
                 <CardDescription>
-                  Market trends, policy changes, and economic indicators analysis
+                  Market trends, policy changes, and economic indicators
+                  analysis
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -212,10 +254,11 @@ export default function LandingPage() {
               How Our AI Predictions Work
             </h2>
             <p className="text-xl text-gray-600">
-              Multi-source data analysis for accurate demand forecasting across sectors
+              Multi-source data analysis for accurate demand forecasting across
+              sectors
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -223,10 +266,11 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Data Collection</h3>
               <p className="text-gray-600">
-                Gather market data, economic indicators, weather patterns, and social sentiment
+                Gather market data, economic indicators, weather patterns, and
+                social sentiment
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-xl">2</span>
@@ -236,17 +280,20 @@ export default function LandingPage() {
                 Google Gemini AI processes patterns and correlations in the data
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-xl">3</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Prediction Generation</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                Prediction Generation
+              </h3>
               <p className="text-gray-600">
-                Generate 15, 30, and 90-day demand forecasts with confidence scores
+                Generate 15, 30, and 90-day demand forecasts with confidence
+                scores
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-xl">4</span>
@@ -267,7 +314,8 @@ export default function LandingPage() {
             Ready to Forecast Market Demand?
           </h2>
           <p className="text-xl text-orange-100 mb-8">
-            Join professionals across healthcare, automobile, and agriculture sectors
+            Join professionals across healthcare, automobile, and agriculture
+            sectors
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Link href="/dashboard">
@@ -276,7 +324,11 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/admin">
-              <Button size="lg" variant="outline" className="px-8 py-3 text-white border-white hover:bg-white hover:text-orange-600">
+              <Button
+                size="lg"
+                variant="outline"
+                className="px-8 py-3 text-black border-white hover:bg-white hover:text-orange-600"
+              >
                 Administrator Portal
               </Button>
             </Link>

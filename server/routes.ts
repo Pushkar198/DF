@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { generatePredictionsForRegion, getPredictionMetrics } from "./services/prediction";
 import { seedSectorData } from "./services/sector-seeding";
 import { analyzeMedicineRecommendations, generateInsights } from "./services/gemini";
-import { InsertEnvironmentalData } from "@shared/schema";
+import { InsertContextualData } from "@shared/schema";
 import { fetchRealEnvironmentalData, fetchRealDiseaseData, fetchRealHealthData, getAvailableRegions, getRegionInfo } from "./services/real-data";
 import { fetchRealTimeNews, fetchSocialMediaTrends, fetchWeatherData, fetchHospitalData, fetchDemographicData, fetchComprehensiveRegionData } from "./services/external-data";
 import { fetchRealWeatherData, fetchRealNewsData, fetchRealSocialMediaData, fetchRealHospitalData, fetchRealDemographicData } from "./services/weather-api";
@@ -148,10 +148,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get diseases
+  // Get diseases (using demand items for healthcare sector)
   app.get("/api/diseases", async (req, res) => {
     try {
-      const diseases = await storage.getDiseases();
+      const diseases = await storage.getDemandItems("healthcare");
       res.json(diseases);
     } catch (error) {
       res.status(500).json({ error: "Failed to get diseases" });
@@ -195,25 +195,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Fetch real-time environmental data
       const realData = await fetchRealEnvironmentalData(region);
       
-      // Store in database for caching
-      let existingData = await storage.getEnvironmentalData(region);
-      if (!existingData) {
-        const environmentalData: InsertEnvironmentalData = {
+      // Store in database for caching using contextual data
+      let existingData = await storage.getContextualData("healthcare", region, "environmental");
+      if (!existingData || existingData.length === 0) {
+        const contextualData: InsertContextualData = {
+          sector: "healthcare",
           region,
-          temperature: realData.temperature,
-          humidity: realData.humidity,
-          airQuality: realData.airQuality,
-          populationDensity: realData.populationDensity,
+          dataType: "environmental",
           data: {
+            temperature: realData.temperature,
+            humidity: realData.humidity,
+            airQuality: realData.airQuality,
+            populationDensity: realData.populationDensity,
             windSpeed: realData.windSpeed,
             precipitation: realData.precipitation,
             uvIndex: realData.uvIndex,
             pressure: realData.pressure,
             visibility: realData.visibility,
             dewPoint: realData.dewPoint
-          }
+          },
+          source: "api"
         };
-        existingData = await storage.createEnvironmentalData(environmentalData);
+        await storage.createContextualData(contextualData);
       }
       
       res.json(realData);

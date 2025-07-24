@@ -127,17 +127,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPredictions(sector?: string, region?: string): Promise<Prediction[]> {
-    let query = db.select().from(predictions);
-    
     if (sector && region) {
-      query = query.where(and(eq(predictions.sector, sector), eq(predictions.region, region)));
+      return await db.select().from(predictions)
+        .where(and(eq(predictions.sector, sector), eq(predictions.region, region)))
+        .orderBy(desc(predictions.createdAt));
     } else if (sector) {
-      query = query.where(eq(predictions.sector, sector));
+      return await db.select().from(predictions)
+        .where(eq(predictions.sector, sector))
+        .orderBy(desc(predictions.createdAt));
     } else if (region) {
-      query = query.where(eq(predictions.region, region));
+      return await db.select().from(predictions)
+        .where(eq(predictions.region, region))
+        .orderBy(desc(predictions.createdAt));
     }
     
-    return await query.orderBy(desc(predictions.createdAt));
+    return await db.select().from(predictions).orderBy(desc(predictions.createdAt));
   }
 
   async getPredictionById(id: number): Promise<Prediction | undefined> {
@@ -163,32 +167,37 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAlerts(userId?: number, sector?: string): Promise<Alert[]> {
-    let query = db.select().from(alerts);
-    
     if (userId && sector) {
-      query = query.where(and(eq(alerts.userId, userId), eq(alerts.sector, sector)));
+      return await db.select().from(alerts)
+        .where(and(eq(alerts.userId, userId), eq(alerts.sector, sector)))
+        .orderBy(desc(alerts.createdAt));
     } else if (userId) {
-      query = query.where(eq(alerts.userId, userId));
+      return await db.select().from(alerts)
+        .where(eq(alerts.userId, userId))
+        .orderBy(desc(alerts.createdAt));
     } else if (sector) {
-      query = query.where(eq(alerts.sector, sector));
+      return await db.select().from(alerts)
+        .where(eq(alerts.sector, sector))
+        .orderBy(desc(alerts.createdAt));
     }
     
-    return await query.orderBy(desc(alerts.createdAt));
+    return await db.select().from(alerts).orderBy(desc(alerts.createdAt));
   }
 
   async getUnreadAlerts(userId: number, sector?: string): Promise<Alert[]> {
-    let query = db.select().from(alerts)
-      .where(and(eq(alerts.userId, userId), eq(alerts.isRead, false)));
-    
     if (sector) {
-      query = query.where(and(
-        eq(alerts.userId, userId), 
-        eq(alerts.isRead, false),
-        eq(alerts.sector, sector)
-      ));
+      return await db.select().from(alerts)
+        .where(and(
+          eq(alerts.userId, userId), 
+          eq(alerts.isRead, false),
+          eq(alerts.sector, sector)
+        ))
+        .orderBy(desc(alerts.createdAt));
     }
     
-    return await query.orderBy(desc(alerts.createdAt));
+    return await db.select().from(alerts)
+      .where(and(eq(alerts.userId, userId), eq(alerts.isRead, false)))
+      .orderBy(desc(alerts.createdAt));
   }
 
   async createAlert(insertAlert: InsertAlert): Promise<Alert> {
@@ -206,18 +215,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getContextualData(sector: string, region: string, dataType?: string): Promise<ContextualData[]> {
-    let query = db.select().from(contextualData)
-      .where(and(eq(contextualData.sector, sector), eq(contextualData.region, region)));
-    
     if (dataType) {
-      query = query.where(and(
-        eq(contextualData.sector, sector),
-        eq(contextualData.region, region),
-        eq(contextualData.dataType, dataType)
-      ));
+      return await db.select().from(contextualData)
+        .where(and(
+          eq(contextualData.sector, sector),
+          eq(contextualData.region, region),
+          eq(contextualData.dataType, dataType)
+        ))
+        .orderBy(desc(contextualData.recordedAt));
     }
     
-    return await query.orderBy(desc(contextualData.recordedAt));
+    return await db.select().from(contextualData)
+      .where(and(eq(contextualData.sector, sector), eq(contextualData.region, region)))
+      .orderBy(desc(contextualData.recordedAt));
   }
 
   async createContextualData(insertData: InsertContextualData): Promise<ContextualData> {
@@ -226,17 +236,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getReports(userId?: number, sector?: string): Promise<Report[]> {
-    let query = db.select().from(reports);
-    
     if (userId && sector) {
-      query = query.where(and(eq(reports.userId, userId), eq(reports.sector, sector)));
+      return await db.select().from(reports)
+        .where(and(eq(reports.userId, userId), eq(reports.sector, sector)))
+        .orderBy(desc(reports.createdAt));
     } else if (userId) {
-      query = query.where(eq(reports.userId, userId));
+      return await db.select().from(reports)
+        .where(eq(reports.userId, userId))
+        .orderBy(desc(reports.createdAt));
     } else if (sector) {
-      query = query.where(eq(reports.sector, sector));
+      return await db.select().from(reports)
+        .where(eq(reports.sector, sector))
+        .orderBy(desc(reports.createdAt));
     }
     
-    return await query.orderBy(desc(reports.createdAt));
+    return await db.select().from(reports).orderBy(desc(reports.createdAt));
   }
 
   async createReport(insertReport: InsertReport): Promise<Report> {

@@ -29,6 +29,7 @@ import {
 import { useLocation } from "wouter";
 import { AIForecastDisplay } from "@/components/dashboard/ai-forecast-display";
 import { LocationPicker } from "@/components/ui/location-picker";
+import { ForecastModal } from "@/components/ui/forecast-modal";
 
 const sectorConfig = {
   healthcare: {
@@ -152,6 +153,8 @@ export default function SectorDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState("30 days");
   const [isGenerating, setIsGenerating] = useState(false);
   const [lastForecast, setLastForecast] = useState<any>(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [currentLoadingStep, setCurrentLoadingStep] = useState("");
 
   const sector = params?.sector || "healthcare";
   const config = sectorConfig[sector as keyof typeof sectorConfig];
@@ -160,8 +163,21 @@ export default function SectorDashboard() {
     if (!config || !selectedRegion) return;
 
     setIsGenerating(true);
+    setLoadingProgress(0);
+    setCurrentLoadingStep("data-collection");
+
     try {
-      const response = await fetch("/api/predictions/generate", {
+      // Simulate progress steps
+      const progressSteps = [
+        { step: "data-collection", progress: 20, delay: 800 },
+        { step: "source-integration", progress: 40, delay: 1000 },
+        { step: "ai-analysis", progress: 60, delay: 1200 },
+        { step: "prediction-generation", progress: 80, delay: 1000 },
+        { step: "report-compilation", progress: 95, delay: 500 },
+      ];
+
+      // Start the API call
+      const forecastPromise = fetch("/api/predictions/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -174,6 +190,17 @@ export default function SectorDashboard() {
         }),
       });
 
+      // Simulate loading progress
+      for (const { step, progress, delay } of progressSteps) {
+        setCurrentLoadingStep(step);
+        setLoadingProgress(progress);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+
+      // Wait for API response
+      const response = await forecastPromise;
+      setLoadingProgress(100);
+
       if (response.ok) {
         const result = await response.json();
         setLastForecast(result.forecast);
@@ -185,6 +212,8 @@ export default function SectorDashboard() {
       console.error("Error generating forecast:", error);
     } finally {
       setIsGenerating(false);
+      setLoadingProgress(0);
+      setCurrentLoadingStep("");
     }
   };
 
@@ -516,8 +545,17 @@ export default function SectorDashboard() {
           </div>
         )}
 
+        {/* AI Forecast Modal */}
+        <ForecastModal 
+          open={isGenerating}
+          sector={config.name}
+          region={selectedRegion}
+          currentStep={currentLoadingStep}
+          progress={loadingProgress}
+        />
+
         {/* AI Forecast Display */}
-        {lastForecast && (
+        {!isGenerating && lastForecast && (
           <div className="mb-8">
             <AIForecastDisplay forecast={lastForecast} />
           </div>
