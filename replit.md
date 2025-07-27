@@ -120,6 +120,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 2025)
 
+✓ **PWC GEMINI API INTEGRATION COMPLETED**: Successfully migrated to PwC Gemini 2.0 Flash API endpoint (July 24, 2025)
+  - **Custom PwC Client**: Created centralized PwC Gemini client with proper API endpoint and authentication headers (API-Key and Authorization Bearer)
+  - **API Response Format**: Fixed response parsing to handle PwC API structure (choices[0].text instead of choices[0].message.content)
+  - **All AI Services Updated**: Migrated all sector-specific AI services from Google GenAI SDK to PwC Gemini API
+  - **Authentication Headers**: Implemented proper API-Key and Authorization Bearer token headers as per curl specification
+  - **Error Handling**: Enhanced error logging and response validation for PwC API integration
+
+✓ **MOBILE RESPONSIVE DESIGN**: Enhanced mobile responsiveness across entire application (July 24, 2025)
+  - **Landing Page**: Fully responsive navigation, hero section, and feature cards with mobile-first design
+  - **Sector Navigation**: Mobile-optimized sector cards, header, and statistics display
+  - **Dashboard**: Responsive forecast configuration, header sections, and button layouts
+  - **CSS Utilities**: Added mobile-responsive utility classes and breakpoints
+  - **Touch-Friendly**: Improved touch targets and mobile interaction patterns
+
 ✓ **COMPREHENSIVE AI FORECASTING LOADER**: Added detailed loading system with real-time progress indicators (July 24, 2025)
   - **Multi-Stage Loading Display**: Shows detailed progress through data collection, source integration, AI analysis, prediction generation, and report compilation
   - **Real-Time Status Updates**: Dynamic progress indicators with step-by-step descriptions of current operations

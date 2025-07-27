@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "./pwc-gemini-client";
 import { storage } from "../storage";
 import { InsertPrediction, InsertAlert } from "@shared/schema";
 import { generateHealthcarePredictions } from "./sectors/healthcare";
@@ -7,9 +7,7 @@ import { generateAgriculturePredictions } from "./sectors/agriculture";
 import { generateRetailPredictions } from "./sectors/retail";
 import { generateEnergyPredictions } from "./sectors/energy";
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
+// PwC Gemini client is imported and used in sector-specific modules
 
 export interface SectorDemandForecast {
   sector: 'healthcare' | 'automobile' | 'agriculture' | 'retail' | 'energy';

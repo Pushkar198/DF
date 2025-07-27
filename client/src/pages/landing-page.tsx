@@ -28,15 +28,15 @@ export default function LandingPage() {
       <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+                <Activity className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">
                   DemandCast AI
                 </h1>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 hidden sm:block">
                   Multi-Sector Demand Forecasting
                 </p>
               </div>
@@ -55,9 +55,21 @@ export default function LandingPage() {
               <a href="#contact" className="text-gray-600 hover:text-gray-900">
                 Contact
               </a>
-              <Link href="/dashboard">
+              <Link href="/sectors">
                 <Button className="bg-orange-500 hover:bg-orange-600">
                   Launch Platform
+                </Button>
+              </Link>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Link href="/sectors">
+                <Button
+                  size="sm"
+                  className="bg-orange-500 hover:bg-orange-600 text-xs"
+                >
+                  Launch
                 </Button>
               </Link>
             </div>
@@ -76,25 +88,16 @@ export default function LandingPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Badge className="bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 px-4 py-2 text-sm font-semibold border border-orange-300">
-                <Activity className="w-4 h-4 mr-2" />
-                Powered by Google Gemini 2.0 Flash AI
-              </Badge>
-              <Badge className="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-4 py-2 text-sm font-semibold border border-green-300">
-                <Globe className="w-4 h-4 mr-2" />
-                Global Coverage Available
-              </Badge>
-            </div>
+            <div className="flex items-center justify-center gap-2 mb-6"></div>
 
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
               Next-Generation
               <span className="block bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
                 Demand Intelligence
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-4 sm:px-0">
               Transform your business decisions with AI-powered demand
               forecasting that analyzes
               <span className="font-semibold text-orange-600">
@@ -105,13 +108,13 @@ export default function LandingPage() {
               Automobile, Agriculture, Retail, and Energy sectors.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-8 sm:mb-12 px-4 sm:px-0">
               <Link href="/sectors">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-12 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+                  className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-8 sm:px-12 py-4 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
                 >
-                  <Play className="w-6 h-6 mr-3" />
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                   Launch Platform
                 </Button>
               </Link>
@@ -119,34 +122,39 @@ export default function LandingPage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="px-12 py-4 text-lg font-semibold border-2 border-gray-300 hover:border-orange-500 hover:text-orange-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  className="w-full sm:w-auto px-8 sm:px-12 py-4 text-base sm:text-lg font-semibold border-2 border-gray-300 hover:border-orange-500 hover:text-orange-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 >
-                  <BarChart3 className="w-6 h-6 mr-3" />
-                  View Live Analytics
-                  <ChevronRight className="w-6 h-6 ml-3" />
+                  <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                  <span className="hidden sm:inline">View Live Analytics</span>
+                  <span className="sm:hidden">Analytics</span>
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" />
                 </Button>
               </Link>
             </div>
 
             {/* Key Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="text-3xl font-bold text-orange-600 mb-2">5</div>
-                <div className="text-gray-600 font-medium">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 max-w-4xl mx-auto px-4 sm:px-0">
+              <div className="text-center p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="text-2xl sm:text-3xl font-bold text-orange-600 mb-2">
+                  5
+                </div>
+                <div className="text-sm sm:text-base text-gray-600 font-medium">
                   Industry Sectors
                 </div>
               </div>
-              <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="text-3xl font-bold text-blue-600 mb-2">
+              <div className="text-center p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">
                   200+
                 </div>
-                <div className="text-gray-600 font-medium">Global Cities</div>
+                <div className="text-sm sm:text-base text-gray-600 font-medium">
+                  Global Cities
+                </div>
               </div>
-              <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="text-3xl font-bold text-green-600 mb-2">
+              <div className="text-center p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">
                   24/7
                 </div>
-                <div className="text-gray-600 font-medium">
+                <div className="text-sm sm:text-base text-gray-600 font-medium">
                   Real-time Analysis
                 </div>
               </div>
@@ -259,47 +267,61 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">1</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-lg sm:text-xl">
+                  1
+                </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Data Collection</h3>
-              <p className="text-gray-600">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                Data Collection
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600">
                 Gather market data, economic indicators, weather patterns, and
                 social sentiment
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">2</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-lg sm:text-xl">
+                  2
+                </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">AI Analysis</h3>
-              <p className="text-gray-600">
-                Google Gemini AI processes patterns and correlations in the data
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                AI Analysis
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600">
+                AI processes patterns and correlations in the data
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">3</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-lg sm:text-xl">
+                  3
+                </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">
                 Prediction Generation
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Generate 15, 30, and 90-day demand forecasts with confidence
                 scores
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">4</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-lg sm:text-xl">
+                  4
+                </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Alert & Action</h3>
-              <p className="text-gray-600">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                Alert & Action
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600">
                 Send alerts and provide actionable recommendations
               </p>
             </div>
@@ -317,19 +339,23 @@ export default function LandingPage() {
             Join professionals across healthcare, automobile, and agriculture
             sectors
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link href="/dashboard">
-              <Button size="lg" variant="secondary" className="px-8 py-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 px-4 sm:px-0">
+            <Link href="/sectors">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="w-full sm:w-auto px-8 py-3"
+              >
                 Access Public Dashboard
               </Button>
             </Link>
-            <Link href="/admin">
+            <Link href="/analytics">
               <Button
                 size="lg"
                 variant="outline"
-                className="px-8 py-3 text-black border-white hover:bg-white hover:text-orange-600"
+                className="w-full sm:w-auto px-8 py-3 text-black border-white hover:bg-white hover:text-orange-600"
               >
-                Administrator Portal
+                Analytics Portal
               </Button>
             </Link>
           </div>
@@ -346,7 +372,7 @@ export default function LandingPage() {
             <span className="text-xl font-bold">DemandCast AI</span>
           </div>
           <p className="text-gray-400 mb-4">
-            AI-powered demand forecasting platform powered by Google Gemini
+            AI-powered demand forecasting platform
           </p>
           <p className="text-gray-500 text-sm">
             © 2025 DemandCast AI. Built for multi-sector demand intelligence.

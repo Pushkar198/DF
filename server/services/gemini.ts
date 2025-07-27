@@ -1,11 +1,9 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "./pwc-gemini-client";
 import { EnvironmentalData, Disease, Prediction } from "@shared/schema";
 import { fetchRealEnvironmentalData, fetchRealDiseaseData, fetchRealHealthData } from "./real-data";
 import { fetchComprehensiveRegionData } from "./external-data";
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
+// Using PwC Gemini client imported above
 
 export interface PredictionInput {
   region: string;
@@ -126,30 +124,7 @@ Respond with JSON array in this exact format:
 ]
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              disease: { type: "string" },
-              confidence: { type: "number" },
-              timeframe: { type: "string" },
-              riskLevel: { type: "string", enum: ["low", "medium", "high", "critical"] },
-              reasoning: { type: "string" },
-              preventiveMeasures: { type: "array", items: { type: "string" } }
-            },
-            required: ["disease", "confidence", "timeframe", "riskLevel", "reasoning", "preventiveMeasures"]
-          }
-        }
-      },
-      contents: prompt,
-    });
-
-    const rawJson = response.text;
+    const rawJson = await pwcGeminiClient.generateContent(prompt);
     if (rawJson) {
       const predictions: PredictionResult[] = JSON.parse(rawJson);
       return predictions;
@@ -208,43 +183,7 @@ Respond with JSON array format:
 ]
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              disease: { type: "string" },
-              medicines: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    name: { type: "string" },
-                    dosage: { type: "string" },
-                    stockPriority: { type: "string" },
-                    indication: { type: "string" },
-                    contraindications: { type: "array", items: { type: "string" } },
-                    availability: { type: "string" }
-                  },
-                  required: ["name", "dosage", "stockPriority", "indication", "contraindications", "availability"]
-                }
-              },
-              alternatives: { type: "array", items: { type: "string" } },
-              regionalConsiderations: { type: "string" },
-              supplyChainImpact: { type: "string" }
-            },
-            required: ["disease", "medicines", "alternatives", "regionalConsiderations", "supplyChainImpact"]
-          }
-        }
-      },
-      contents: prompt,
-    });
-
-    const rawJson = response.text;
+    const rawJson = await pwcGeminiClient.generateContent(prompt);
     if (rawJson) {
       return JSON.parse(rawJson);
     } else {
@@ -297,12 +236,8 @@ Based on this real-time data, provide:
 Provide a comprehensive but concise summary (4-5 sentences) with actionable insights for healthcare professionals.
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: prompt,
-    });
-
-    return response.text || "No insights available at this time.";
+    const response = await pwcGeminiClient.generateContent(prompt);
+    return response || "No insights available at this time.";
   } catch (error) {
     console.error('Insights generation error:', error);
     return "Unable to generate insights due to AI service error.";

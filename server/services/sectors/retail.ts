@@ -1,9 +1,7 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "../pwc-gemini-client";
 import { DemandPrediction } from "../ai-demand-forecasting";
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
+// Using PwC Gemini client imported above
 
 export async function generateRetailPredictions(
   region: string,
@@ -106,15 +104,7 @@ Add these fields to each prediction:
 }`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      config: {
-        responseMimeType: "application/json"
-      }
-    });
-    
-    const text = response.candidates[0].content.parts[0].text;
+    const text = await pwcGeminiClient.generateContent(prompt);
     
     // Extract JSON from response
     const jsonMatch = text.match(/\{[\s\S]*\}/);

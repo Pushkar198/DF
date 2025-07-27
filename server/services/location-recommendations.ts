@@ -1,6 +1,4 @@
-import { GoogleGenerativeAI } from "@google/genai";
-
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+import { pwcGeminiClient } from "./pwc-gemini-client";
 
 export interface LocationRecommendation {
   category: string;

@@ -112,44 +112,44 @@ export function SectorNavigation() {
           }}>
           </div>
         </div>
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mr-4">
-                <Activity className="w-8 h-8 text-white" />
+            <div className="flex flex-col sm:flex-row items-center justify-center mb-6">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mb-4 sm:mb-0 sm:mr-4">
+                <Activity className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <div className="text-left">
-                <h1 className="text-5xl font-bold text-white">DemandCast AI</h1>
-                <p className="text-orange-200 text-lg">Multi-Sector Intelligence Platform</p>
+              <div className="text-center sm:text-left">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">DemandCast AI</h1>
+                <p className="text-orange-200 text-base sm:text-lg">Multi-Sector Intelligence Platform</p>
               </div>
             </div>
             
-            <p className="text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-4 sm:px-0">
               Select your industry sector to access AI-powered demand forecasting, 
               market analytics, and real-time business intelligence
             </p>
             
-            <div className="flex items-center justify-center gap-8 text-gray-300">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-gray-300">
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-400">5</div>
-                <div className="text-sm">Industry Sectors</div>
+                <div className="text-2xl sm:text-3xl font-bold text-orange-400">5</div>
+                <div className="text-xs sm:text-sm">Industry Sectors</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-400">200+</div>
-                <div className="text-sm">Global Locations</div>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-400">200+</div>
+                <div className="text-xs sm:text-sm">Global Locations</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-400">24/7</div>
-                <div className="text-sm">Real-time Analysis</div>
+                <div className="text-2xl sm:text-3xl font-bold text-green-400">24/7</div>
+                <div className="text-xs sm:text-sm">Real-time Analysis</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 pb-16">
+      <div className="container mx-auto px-4 sm:px-6 pb-8 sm:pb-16">
         {/* Interactive Sector Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {sectors.map((sector, index) => {
             const Icon = sector.icon;
             // Get sector-specific prediction count

@@ -1,8 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
+import { pwcGeminiClient } from "./pwc-gemini-client";
 
 export interface RealTimeDataSources {
   weather: WeatherData;
@@ -87,28 +83,12 @@ async function fetchRealTimeNews(sector: string): Promise<NewsData | null> {
 // Gemini AI data generation
 async function generateWeatherDataWithGemini(region: string): Promise<WeatherData> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Generate realistic current weather data for ${region}, India. 
-      Consider seasonal patterns, regional climate, and current month.
-      Return JSON: {"temperature": number, "humidity": number, "precipitation": number, "windSpeed": number, "conditions": "string"}`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "object",
-          properties: {
-            temperature: { type: "number" },
-            humidity: { type: "number" },
-            precipitation: { type: "number" },
-            windSpeed: { type: "number" },
-            conditions: { type: "string" }
-          },
-          required: ["temperature", "humidity", "precipitation", "windSpeed", "conditions"]
-        }
-      }
-    });
-
-    const data = JSON.parse(response.text || '{}');
+    const prompt = `Generate realistic current weather data for ${region}, India. 
+    Consider seasonal patterns, regional climate, and current month.
+    Return only JSON: {"temperature": number, "humidity": number, "precipitation": number, "windSpeed": number, "conditions": "string"}`;
+    
+    const response = await pwcGeminiClient.generateContent(prompt);
+    const data = JSON.parse(response);
     return { ...data, source: 'gemini' as const };
   } catch (error) {
     console.error('Gemini weather generation failed:', error);
@@ -118,55 +98,20 @@ async function generateWeatherDataWithGemini(region: string): Promise<WeatherDat
 
 async function generateMarketDataWithGemini(): Promise<MarketData> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Generate realistic current Indian market data including:
-      - Major indices (Sensex, Nifty, Bank Nifty) with realistic values and daily changes
-      - Commodity prices (Gold, Silver, Crude Oil, Rice, Wheat) in INR
-      - Currency rates (USD, EUR, GBP to INR)
-      Make values realistic for current economic conditions.
-      Return JSON format.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "object",
-          properties: {
-            indices: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  value: { type: "number" },
-                  change: { type: "number" }
-                }
-              }
-            },
-            commodityPrices: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  commodity: { type: "string" },
-                  price: { type: "number" },
-                  change: { type: "number" }
-                }
-              }
-            },
-            currency: {
-              type: "object",
-              properties: {
-                usd: { type: "number" },
-                eur: { type: "number" },
-                gbp: { type: "number" }
-              }
-            }
-          }
-        }
-      }
-    });
-
-    const data = JSON.parse(response.text || '{}');
+    const prompt = `Generate realistic current Indian market data including:
+    - Major indices (Sensex, Nifty, Bank Nifty) with realistic values and daily changes
+    - Commodity prices (Gold, Silver, Crude Oil, Rice, Wheat) in INR
+    - Currency rates (USD, EUR, GBP to INR)
+    Make values realistic for current economic conditions.
+    Return only JSON in this format:
+    {
+      "indices": [{"name": "string", "value": number, "change": number}],
+      "commodityPrices": [{"commodity": "string", "price": number, "change": number}],
+      "currency": {"usd": number, "eur": number, "gbp": number}
+    }`;
+    
+    const response = await pwcGeminiClient.generateContent(prompt);
+    const data = JSON.parse(response);
     return { ...data, source: 'gemini' as const };
   } catch (error) {
     console.error('Gemini market generation failed:', error);
@@ -176,39 +121,25 @@ async function generateMarketDataWithGemini(): Promise<MarketData> {
 
 async function generateNewsDataWithGemini(sector: string): Promise<NewsData> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Generate realistic current news headlines and trends for ${sector} sector in India.
-      Include:
-      - 5 realistic current headlines
-      - Sector-specific news for healthcare, automobile, agriculture
-      - Overall sentiment analysis
-      - Make content relevant to current Indian market conditions
-      Return JSON format.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "object",
-          properties: {
-            headlines: {
-              type: "array",
-              items: { type: "string" }
-            },
-            sectorNews: {
-              type: "object",
-              properties: {
-                healthcare: { type: "array", items: { type: "string" } },
-                automobile: { type: "array", items: { type: "string" } },
-                agriculture: { type: "array", items: { type: "string" } }
-              }
-            },
-            sentiment: { type: "string", enum: ["positive", "negative", "neutral"] }
-          }
-        }
-      }
-    });
-
-    const data = JSON.parse(response.text || '{}');
+    const prompt = `Generate realistic current news headlines and trends for ${sector} sector in India.
+    Include:
+    - 5 realistic current headlines
+    - Sector-specific news for healthcare, automobile, agriculture
+    - Overall sentiment analysis
+    - Make content relevant to current Indian market conditions
+    Return only JSON in this format:
+    {
+      "headlines": ["string"],
+      "sectorNews": {
+        "healthcare": ["string"],
+        "automobile": ["string"], 
+        "agriculture": ["string"]
+      },
+      "sentiment": "positive|negative|neutral"
+    }`;
+    
+    const response = await pwcGeminiClient.generateContent(prompt);
+    const data = JSON.parse(response);
     return { ...data, source: 'gemini' as const };
   } catch (error) {
     console.error('Gemini news generation failed:', error);
@@ -286,9 +217,9 @@ export async function getRealTimeData(sector: string, region: string): Promise<R
   // Try real-time APIs first, then Gemini, then reliable fallback
   try {
     const [weather, market, news] = await Promise.all([
-      fetchRealTimeWeather(region).catch(() => generateWeatherDataWithGemini(region)),
-      fetchRealTimeMarket().catch(() => generateMarketDataWithGemini()),
-      fetchRealTimeNews(sector).catch(() => generateNewsDataWithGemini(sector))
+      fetchRealTimeWeather(region).then(result => result || generateWeatherDataWithGemini(region)),
+      fetchRealTimeMarket().then(result => result || generateMarketDataWithGemini()),
+      fetchRealTimeNews(sector).then(result => result || generateNewsDataWithGemini(sector))
     ]);
 
     // Generate economic and social data with Gemini
@@ -313,31 +244,16 @@ export async function getRealTimeData(sector: string, region: string): Promise<R
 
 async function generateEconomicDataWithGemini(): Promise<EconomicData> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Generate realistic current Indian economic indicators:
-      - GDP growth rate (quarterly, realistic for current conditions)
-      - Inflation rate (current CPI)
-      - Interest rate (current repo rate)
-      - Unemployment rate
-      Make values realistic for current Indian economy.
-      Return JSON format.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "object",
-          properties: {
-            gdpGrowth: { type: "number" },
-            inflation: { type: "number" },
-            interestRate: { type: "number" },
-            unemploymentRate: { type: "number" }
-          },
-          required: ["gdpGrowth", "inflation", "interestRate", "unemploymentRate"]
-        }
-      }
-    });
-
-    const data = JSON.parse(response.text || '{}');
+    const prompt = `Generate realistic current Indian economic indicators:
+    - GDP growth rate (quarterly, realistic for current conditions)
+    - Inflation rate (current CPI)
+    - Interest rate (current repo rate)
+    - Unemployment rate
+    Make values realistic for current Indian economy.
+    Return only JSON: {"gdpGrowth": number, "inflation": number, "interestRate": number, "unemploymentRate": number}`;
+    
+    const response = await pwcGeminiClient.generateContent(prompt);
+    const data = JSON.parse(response);
     return { ...data, source: 'gemini' as const };
   } catch (error) {
     return { gdpGrowth: 6.8, inflation: 4.2, interestRate: 6.5, unemploymentRate: 3.9, source: 'static' };
@@ -346,40 +262,19 @@ async function generateEconomicDataWithGemini(): Promise<EconomicData> {
 
 async function generateSocialDataWithGemini(sector: string): Promise<SocialData> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Generate realistic social media trends and sentiment data for ${sector} sector in India:
-      - Trending topics related to the sector
-      - Sentiment scores (-1 to 1) for each sector
-      - Viral keywords related to demand patterns
-      Return JSON format.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "object",
-          properties: {
-            trendingTopics: {
-              type: "array",
-              items: { type: "string" }
-            },
-            sectorSentiment: {
-              type: "object",
-              properties: {
-                healthcare: { type: "number" },
-                automobile: { type: "number" },
-                agriculture: { type: "number" }
-              }
-            },
-            viralKeywords: {
-              type: "array",
-              items: { type: "string" }
-            }
-          }
-        }
-      }
-    });
-
-    const data = JSON.parse(response.text || '{}');
+    const prompt = `Generate realistic social media trends and sentiment data for ${sector} sector in India:
+    - Trending topics related to the sector
+    - Sentiment scores (-1 to 1) for each sector
+    - Viral keywords related to demand patterns
+    Return only JSON:
+    {
+      "trendingTopics": ["string"],
+      "sectorSentiment": {"healthcare": number, "automobile": number, "agriculture": number},
+      "viralKeywords": ["string"]
+    }`;
+    
+    const response = await pwcGeminiClient.generateContent(prompt);
+    const data = JSON.parse(response);
     return { ...data, source: 'gemini' as const };
   } catch (error) {
     return {

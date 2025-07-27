@@ -1,9 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "../pwc-gemini-client";
 import { fetchComprehensiveRegionData } from "../external-data";
-
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
 
 export interface AutomobileForecastInput {
   region: string;
@@ -189,15 +185,7 @@ Respond with JSON array in this exact format:
 }]
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      config: {
-        responseMimeType: "application/json"
-      }
-    });
-
-    const rawJson = response.text;
+    const rawJson = await pwcGeminiClient.generateContent(prompt);
     if (rawJson) {
       const predictions = JSON.parse(rawJson);
       // Add demandChange field for compatibility

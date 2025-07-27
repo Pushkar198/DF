@@ -130,6 +130,31 @@
     background-color: hsl(var(--pwc-orange-hover));
   }
   
+  /* Mobile Responsive Utilities */
+  .mobile-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  .mobile-text-responsive {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-text-responsive {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+  
   /* Professional Sector Dashboard Styles */
   .sector-card-gradient {
     background: white;

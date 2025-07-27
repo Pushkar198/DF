@@ -1,8 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "./pwc-gemini-client";
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
+// Using PwC Gemini client imported above
 
 // Real location data including India states and global locations
 export const LOCATIONS = {

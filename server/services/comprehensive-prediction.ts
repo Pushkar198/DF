@@ -1,12 +1,10 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "./pwc-gemini-client";
 import { fetchRealEnvironmentalData, fetchRealDiseaseData, fetchRealHealthData } from "./real-data";
 import { fetchComprehensiveRegionData } from "./external-data";
 import { storage } from "../storage";
 import { InsertPrediction, InsertAlert } from "@shared/schema";
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
+// Using PwC Gemini client imported above
 
 export interface ComprehensivePredictionResult {
   disease: string;

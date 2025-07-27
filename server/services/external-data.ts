@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "./pwc-gemini-client";
 import { 
   fetchRealWeatherData, 
   fetchRealNewsData, 
@@ -7,9 +7,7 @@ import {
   fetchRealDemographicData 
 } from "./weather-api";
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
+// Using PwC Gemini client imported above
 
 export interface NewsData {
   headlines: string[];
@@ -99,15 +97,7 @@ Respond with JSON:
 }
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      config: {
-        responseMimeType: "application/json",
-      },
-      contents: prompt,
-    });
-
-    const rawJson = response.text;
+    const rawJson = await pwcGeminiClient.generateContent(prompt);
     if (rawJson) {
       const data = JSON.parse(rawJson);
       return {

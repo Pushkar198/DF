@@ -292,37 +292,37 @@ export default function SectorDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Professional Header Section - Exact Match */}
+      {/* Professional Header Section - Mobile Responsive */}
       <div className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900">
-        <div className="container mx-auto px-6 py-12">
-          <div className="flex items-center gap-6">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setLocation("/sectors")}
-              className="text-white hover:bg-white/20 hover:text-white"
+              className="text-white hover:bg-white/20 hover:text-white shrink-0"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <div className={`w-16 h-16 rounded-2xl ${config.color} flex items-center justify-center`}>
-              <Icon className="w-8 h-8 text-white" />
+            <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-2xl ${config.color} flex items-center justify-center shrink-0`}>
+              <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-4xl font-bold text-white">
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white truncate">
                   {config.name}
                 </h1>
-                <Badge className="bg-green-500 text-white border-0 px-3 py-1 text-xs font-semibold">
+                <Badge className="bg-green-500 text-white border-0 px-2 sm:px-3 py-1 text-xs font-semibold w-fit">
                   Live
                 </Badge>
               </div>
-              <p className="text-white/80 text-lg mb-3">
+              <p className="text-white/80 text-sm sm:text-base lg:text-lg mb-3">
                 AI-Powered Demand Intelligence & Market Analytics
               </p>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
                 <div className="flex items-center gap-2 text-white/70">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-sm">Real-time Analysis</span>
+                  <span className="text-xs sm:text-sm">Real-time Analysis</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/70">
                   <div className="w-2 h-2 bg-blue-400 rounded-full" />
@@ -334,19 +334,19 @@ export default function SectorDashboard() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
-        {/* Forecast Configuration Card - Exact Match */}
-        <Card className="bg-white shadow-lg border-0 rounded-2xl mb-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Forecast Configuration Card - Mobile Responsive */}
+        <Card className="bg-white shadow-lg border-0 rounded-2xl mb-6 sm:mb-8">
           <CardHeader>
-            <CardTitle className="text-xl font-semibold text-gray-800">
+            <CardTitle className="text-lg sm:text-xl font-semibold text-gray-800">
               Forecast Configuration
             </CardTitle>
             <p className="text-gray-600 text-sm">
               Configure your AI-powered demand forecasting parameters
             </p>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Location Section */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-600">

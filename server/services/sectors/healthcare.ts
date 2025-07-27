@@ -1,10 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
+import { pwcGeminiClient } from "../pwc-gemini-client";
 import { fetchComprehensiveRegionData } from "../external-data";
 import { fetchRealHealthData, fetchRealDiseaseData } from "../real-data";
-
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "AIzaSyD_fPFEGtS73QS4E1HqEcyAweGGa-qglZI"
-});
 
 export interface HealthcareForecastInput {
   region: string;
@@ -448,25 +444,12 @@ Respond with JSON array in this exact format:
 }]
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      config: {
-        responseMimeType: "application/json"
-      }
-    });
-
-    const rawJson = response.text;
-    if (rawJson) {
-      const predictions = JSON.parse(rawJson);
-      // Add demandChange field for compatibility
-      return predictions.map((p: any) => ({
-        ...p,
-        demandChange: p.predictedDemand - p.currentDemand
-      }));
-    } else {
-      throw new Error("Empty response from Gemini AI");
-    }
+    const predictions = await pwcGeminiClient.generateJSON(prompt);
+    // Add demandChange field for compatibility
+    return predictions.map((p: any) => ({
+      ...p,
+      demandChange: p.predictedDemand - p.currentDemand
+    }));
   } catch (error) {
     console.error('Error generating healthcare predictions:', error);
     throw new Error(`Failed to generate healthcare demand forecast: ${error}`);
